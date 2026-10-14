@@ -967,10 +967,42 @@
 
       /* ---------- 音频 ---------- */
       let audioCtx = null;
+      function ensureAudio() {
+        try {
+          audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          // iOS/iPadOS: AudioContext 默认 suspended，必须在用户手势中 resume 才能出声
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) {}
+        try {
+          // 预热语音列表，避免 iOS 首次调用无声
+          if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); pickZhVoice(); }
+        } catch (e) {}
+      }
+      // 在用户手势中解锁音频（iOS 要求）
+      ['pointerdown', 'touchstart'].forEach(function (ev) {
+        window.addEventListener(ev, ensureAudio, { passive: true });
+      });
+
+      // 中文语音选择（iOS 只设 lang 不可靠，需显式指定 voice）
+      let zhVoice = null;
+      function pickZhVoice() {
+        try {
+          const vs = window.speechSynthesis.getVoices() || [];
+          zhVoice = vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf('zh') === 0; })
+            || vs.find(function (v) { return v.lang && v.lang.toLowerCase().indexOf('cmn') === 0; })
+            || null;
+        } catch (e) { zhVoice = null; }
+      }
+      if ('speechSynthesis' in window) {
+        pickZhVoice();
+        try { window.speechSynthesis.onvoiceschanged = pickZhVoice; } catch (e) {}
+      }
+
       function tone(freq, dur, type = 'sine', delay = 0, vol = .08) {
         if (!soundEnabled) return;
         try {
           audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
           const t = audioCtx.currentTime + delay;
           const o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = type; o.frequency.value = freq;
@@ -988,10 +1020,18 @@
 
       function speak(text) {
         if (!soundEnabled || !('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'zh-CN'; u.rate = .82; u.pitch = 1.18;
-        window.speechSynthesis.speak(u);
+        try {
+          const synth = window.speechSynthesis;
+          synth.cancel();
+          // iOS: cancel 后立即 speak 可能被吞掉，延迟一小会再播
+          setTimeout(function () {
+            if (!soundEnabled) return;
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'zh-CN'; u.rate = .82; u.pitch = 1.18;
+            if (zhVoice) u.voice = zhVoice;
+            synth.speak(u);
+          }, 60);
+        } catch (e) {}
       }
       function stopSpeech() { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }
 
