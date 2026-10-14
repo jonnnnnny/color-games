@@ -122,7 +122,7 @@
       .object-wrap { position: relative; }
       .peek-ring { position: absolute; inset: -14px; border-radius: 44px; border: 5px solid var(--purple); opacity: 0; pointer-events: none; }
       .peek-ring.show { opacity: .35; animation: ring-shrink 2.5s linear forwards; }
-      .tone-art { --tone: #ef6b67; position: relative; display: block; width: 72%; height: 72%; overflow: hidden; border-radius: 50%; background: var(--tone); box-shadow: inset -13px -13px 0 rgba(0,0,0,.10), inset 12px 12px 0 rgba(255,255,255,.16); }
+      .tone-art { --tone: #ef6b67; position: relative; display: block; width: 72%; height: 72%; overflow: visible; border-radius: 50%; background: var(--tone); box-shadow: inset -13px -13px 0 rgba(0,0,0,.10), inset 12px 12px 0 rgba(255,255,255,.16); }
       /* 浅色（白/黄/灰）实物在米黄背景上对比度低，加一圈跟随形状的描边光晕 */
       .tone-art.is-pale { filter: drop-shadow(0 0 4px rgba(95,85,130,.45)); }
       .tone-art::before, .tone-art::after { content: ""; position: absolute; display: block; background: color-mix(in srgb, var(--tone) 75%, white); }
@@ -171,7 +171,8 @@
       .tone-art.art-fish { width: 60%; height: 46%; border-radius: 52% 52% 48% 48% / 64% 64% 40% 40%; }
       .tone-art.art-fish::before { width: 0; height: 0; top: 16%; right: -28%; border-top: 17px solid transparent; border-bottom: 17px solid transparent; border-left: 27px solid var(--tone); border-radius: 0; background: transparent; opacity: 1; transform: none; }
       .tone-art.art-fish::after { width: 24%; height: 30%; top: 22%; left: 15%; right: auto; border-radius: 50%; background: radial-gradient(circle at 62% 50%, rgba(45,35,75,.85) 0 30%, #fff 34% 100%); opacity: 1; transform: none; }
-      .tone-art.art-butterfly { width: 16%; height: 44%; margin: 22% auto 0; overflow: visible; border-radius: 50%; box-shadow: -40px -6px 0 -2px color-mix(in srgb, var(--tone) 86%, white), 40px -6px 0 -2px color-mix(in srgb, var(--tone) 86%, white), -28px 24px 0 -2px color-mix(in srgb, var(--tone) 72%, white), 28px 24px 0 -2px color-mix(in srgb, var(--tone) 72%, white); transform: rotate(-6deg); }
+      /* 蝴蝶：底座=身体，四片翅膀用 box-shadow 贴着身体画（位移小+加大spread保证相连），触角用伪元素 */
+      .tone-art.art-butterfly { width: 15%; height: 42%; margin: 24% auto 0; overflow: visible; border-radius: 50%; background: color-mix(in srgb, var(--tone) 68%, black); box-shadow: -21px -10px 0 7px color-mix(in srgb, var(--tone) 88%, white), 21px -10px 0 7px color-mix(in srgb, var(--tone) 88%, white), -16px 22px 0 3px color-mix(in srgb, var(--tone) 76%, white), 16px 22px 0 3px color-mix(in srgb, var(--tone) 76%, white); transform: rotate(-6deg); }
       .tone-art.art-butterfly::before { width: 7px; height: 15px; top: -19px; left: 8px; border-radius: 99px; background: color-mix(in srgb, var(--tone) 70%, black); opacity: 1; transform: rotate(-22deg); box-shadow: 3px -2px 0 color-mix(in srgb, var(--tone) 70%, black); }
       .tone-art.art-butterfly::after { width: 7px; height: 15px; top: -19px; left: auto; right: 8px; bottom: auto; border-radius: 99px; background: color-mix(in srgb, var(--tone) 70%, black); opacity: 1; transform: rotate(22deg); }
       .tone-art.art-mushroom { width: 56%; height: 38%; margin-top: 44%; border-radius: 8px 8px 12px 12px; background: color-mix(in srgb, var(--tone) 72%, white); box-shadow: inset -6px -6px 0 rgba(0,0,0,.08); }
