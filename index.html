@@ -2,12 +2,15 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#fff7e8" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="彩虹小课堂" />
     <meta name="format-detection" content="telephone=no" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23fff7e8'/%3E%3Ccircle cx='96' cy='96' r='60' fill='none' stroke='%23f36c70' stroke-width='14' stroke-dasharray='47 47' transform='rotate(-90 96 96)'/%3E%3Ccircle cx='96' cy='96' r='28' fill='%237366dc'/%3E%3C/svg%3E" />
     <title>彩虹小课堂 · 颜色大冒险</title>
     <style>
       :root {
@@ -52,6 +55,9 @@
       .hill-two { width: 880px; height: 350px; right: -370px; background: #9fd288; }
 
       button { font-family: inherit; touch-action: manipulation; }
+      /* 全局触摸优化（F-6.9）：防止双指缩放和手势冲突 */
+      html, body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; overscroll-behavior: none; }
+      canvas { touch-action: none; }
 
       .app { width: min(100% - 28px, 880px); min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: max(22px, env(safe-area-inset-top)) 0 max(38px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
       header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -226,6 +232,13 @@
       .mode-card.mc-explore { background: linear-gradient(135deg, #ff6b9d, #e84393); grid-column: span 2; min-height: 100px; flex-direction: row; align-items: center; justify-content: center; gap: 12px; }
       .mode-card.mc-explore .mode-emoji { font-size: 30px; }
       .mode-card.mc-explore .mode-desc { max-width: 200px; }
+      .mode-card.mc-balloon { background: linear-gradient(135deg, #ff7043, #f4511e); }
+      .mode-card.mc-doodle { background: linear-gradient(135deg, #66bb6a, #43a047); }
+      .mode-card.mc-bubble { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+      .mode-card.mc-puzzle { background: linear-gradient(135deg, #ab47bc, #8e24aa); }
+      .mode-card.mc-magic { background: linear-gradient(135deg, #ff8a65, #e64a19); }
+      .mode-card.mc-piano { background: linear-gradient(135deg, #26c6da, #00acc1); }
+      .mode-card.mc-pinch { background: linear-gradient(135deg, #9ccc65, #7cb342); }
 
       /* ---------- 自由探索模式（F-2.1） ---------- */
       .explore-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: clamp(12px, 2.5vw, 20px); margin-top: 16px; }
@@ -353,6 +366,47 @@
         .color-choice { min-height: 78px; }
         .mode-desc { font-size: 11px; }
       }
+
+      /* ---- iPad / 大屏适配（F-6.6） ---- */
+      @media (min-width: 768px) {
+        .app { width: min(100% - 48px, 960px); }
+        .mode-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .mode-card { min-height: 168px; padding: 22px 20px 16px; }
+        .mode-emoji { font-size: 40px; }
+        .mode-name { font-size: 22px; }
+        .mode-desc { font-size: 15px; }
+        .home-title { font-size: 42px; }
+        .home-sub { font-size: 18px; }
+        .answers { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 24px; }
+        .color-choice { min-height: 160px; border-radius: 32px; }
+        .explore-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+        .explore-card { min-height: 160px; }
+        .explore-card .explore-swatch { width: 64px; height: 64px; }
+        .explore-card .shape-art { width: 60px; height: 60px; }
+        .explore-card .shape-art.shape-triangle { border-right: 38px solid transparent; border-bottom: 64px solid var(--s-color); border-left: 38px solid transparent; }
+        .game-card { padding: 40px; border-radius: 40px; }
+        .object { width: 160px; height: 160px; }
+        .color-name { font-size: 80px; }
+        .back-button { width: 48px; height: 48px; font-size: 22px; }
+        .sound-button { width: 52px; height: 52px; font-size: 24px; }
+        .restart-button, .next-level-button, .home-button { padding: 18px 36px; font-size: 20px; }
+      }
+      @media (min-width: 1024px) {
+        .mode-grid-3 { grid-template-columns: repeat(4, 1fr); }
+        .mode-card.mc-explore { grid-column: span 4; }
+        .app { width: min(100% - 60px, 1080px); }
+      }
+
+      /* ---- 触控区域规范（F-6.7）：所有可点击元素 min-height ≥ 88px ---- */
+      @media (pointer: coarse) {
+        .mode-card { min-height: max(128px, 88px); }
+        .color-choice { min-height: max(136px, 88px); }
+        .explore-card { min-height: max(130px, 88px); }
+        .explore-tab { min-height: 44px; }
+        .sound-button, .back-button { width: max(47px, 44px); height: max(47px, 44px); }
+        .restart-button, .next-level-button, .home-button { min-height: 52px; }
+      }
+
       @media (max-height: 620px) and (orientation: landscape) {
         .app { padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
         main { padding-top: 6px; }
@@ -363,7 +417,107 @@
         .answers { margin-top: 10px; }
         .color-choice { min-height: 58px; }
         .hint { margin-top: 10px; }
+        .home-title { font-size: 28px; margin: 0; }
+        .home-sub { margin: 4px 0 12px; font-size: 14px; }
+        .home-section { margin-bottom: 12px; }
+        .home-section-title { font-size: 16px; margin-bottom: 8px; }
+        .mode-card { min-height: 88px; padding: 10px 12px; }
+        .mode-emoji { font-size: 24px; }
+        .mode-name { font-size: 15px; }
+        .mode-desc { font-size: 12px; }
+        .mode-grid-3 { gap: 10px; }
+        .explore-grid { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
+        .explore-card { min-height: 90px; padding: 10px 8px; }
       }
+      /* ---------- 触摸游戏：气球戳戳乐（F-6.11） ---------- */
+      .balloon-stage { position: relative; width: 100%; min-height: 420px; overflow: hidden; border-radius: 24px; background: linear-gradient(180deg, #e8f4ff 0%, #fff7e8 100%); }
+      .balloon { position: absolute; width: 70px; height: 88px; cursor: pointer; touch-action: none; transition: transform .1s ease; }
+      .balloon-body { width: 70px; height: 84px; border-radius: 50% 50% 48% 48%; box-shadow: inset -8px -8px 0 rgba(0,0,0,.10), inset 6px 6px 0 rgba(255,255,255,.20); position: relative; }
+      .balloon-body::after { content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid inherit; }
+      .balloon-string { position: absolute; top: 88px; left: 50%; width: 2px; height: 30px; background: rgba(60,54,83,.3); transform: translateX(-50%); }
+      .balloon.popping { animation: balloon-pop .4s ease-out forwards; pointer-events: none; }
+      .balloon-hint { text-align: center; padding: 16px; color: var(--ink); font-size: 18px; font-weight: 800; }
+      @keyframes balloon-pop { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .6; } 100% { transform: scale(0); opacity: 0; } }
+      @keyframes balloon-float { from { transform: translateY(20px); } to { transform: translateY(-20px); } }
+
+      /* ---------- 触摸游戏：颜色涂鸦板（F-6.12） ---------- */
+      .doodle-wrap { display: flex; flex-direction: column; gap: 14px; }
+      .doodle-canvas { width: 100%; height: clamp(280px, 50vh, 420px); border: 4px solid rgba(255,255,255,.72); border-radius: 24px; background: #fff; box-shadow: 0 6px 0 rgba(68,54,102,.10); touch-action: none; cursor: crosshair; }
+      .doodle-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .doodle-colors { display: flex; gap: 8px; flex-wrap: wrap; }
+      .doodle-pen { width: 40px; height: 40px; border-radius: 50%; border: 3px solid rgba(255,255,255,.72); cursor: pointer; box-shadow: 0 3px 0 rgba(68,54,102,.10); transition: transform .12s ease; touch-action: manipulation; }
+      .doodle-pen:active { transform: translateY(3px); }
+      .doodle-pen.active { border-color: var(--purple); border-width: 4px; transform: scale(1.15); }
+      .doodle-clear { padding: 10px 20px; border: 0; border-radius: 16px; color: #fff; background: #e2574c; box-shadow: 0 4px 0 rgba(180,60,55,.25); cursor: pointer; font: inherit; font-size: 16px; font-weight: 900; touch-action: manipulation; }
+      .doodle-clear:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(180,60,55,.25); }
+      .doodle-size { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 800; color: var(--ink); }
+      .doodle-size input { width: 80px; accent-color: var(--purple); }
+
+      /* ---------- 触摸游戏：气泡纸 popping（F-6.14） ---------- */
+      .bubble-stage { width: 100%; }
+      .bubble-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 10px; padding: 16px; }
+      .bubble { display: grid; place-items: center; width: 100%; aspect-ratio: 1; border: 0; border-radius: 50%; cursor: pointer; touch-action: manipulation; transition: transform .1s ease; box-shadow: inset -6px -6px 0 rgba(0,0,0,.10), inset 5px 5px 0 rgba(255,255,255,.20); }
+      .bubble:active { transform: scale(.92); }
+      .bubble.popped { animation: bubble-pop .3s ease-out forwards; pointer-events: none; }
+      .bubble-hint { text-align: center; padding: 12px; color: var(--ink); font-size: 18px; font-weight: 800; }
+      @keyframes bubble-pop { 0% { transform: scale(1); } 50% { transform: scale(.7); box-shadow: inset 0 0 0 rgba(0,0,0,.10); } 100% { transform: scale(.3); opacity: 0; } }
+
+      /* ---------- 触摸游戏：形状拼拼乐（F-6.13） ---------- */
+      .puzzle-stage { position: relative; width: 100%; min-height: 420px; border-radius: 24px; background: linear-gradient(180deg, #f0eaff 0%, #fff7e8 100%); overflow: hidden; touch-action: none; }
+      .puzzle-slot { position: absolute; display: grid; place-items: center; border: 3px dashed rgba(115,102,220,.35); border-radius: 20px; background: rgba(115,102,220,.06); }
+      .puzzle-slot.filled { border-color: transparent; background: transparent; }
+      .puzzle-piece { position: absolute; display: grid; place-items: center; width: 80px; height: 80px; border-radius: 20px; background: #fff; box-shadow: 0 5px 0 rgba(68,54,102,.12), 0 8px 20px rgba(68,54,102,.08); cursor: grab; touch-action: none; transition: transform .1s ease; z-index: 2; }
+      .puzzle-piece:active { cursor: grabbing; transform: scale(1.08); }
+      .puzzle-piece.snapped { transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+      .puzzle-piece .shape-art { width: 50px; height: 50px; }
+      .puzzle-piece .shape-art.shape-triangle { border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
+      .puzzle-piece .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 4px; }
+      .puzzle-slot .shape-art { width: 50px; height: 50px; opacity: .25; }
+      .puzzle-slot .shape-art.shape-triangle { border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
+      .puzzle-slot .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 4px; }
+      .puzzle-hint { text-align: center; padding: 16px; color: var(--ink); font-size: 18px; font-weight: 800; }
+      .puzzle-progress { display: flex; justify-content: center; gap: 8px; padding: 8px 0 4px; }
+      .puzzle-dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd6c8; transition: background .2s ease, transform .2s ease; }
+      .puzzle-dot.done { background: #6dbf6e; transform: scale(1.2); }
+
+      /* ---------- 触摸游戏：长按变色魔术（F-6.15） ---------- */
+      .magic-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 30px 16px; }
+      .magic-block { display: grid; place-items: center; width: clamp(160px, 50vw, 220px); height: clamp(160px, 50vw, 220px); border-radius: 36px; cursor: pointer; touch-action: none; box-shadow: inset 0 -12px 0 rgba(0,0,0,.12), inset 10px 10px 0 rgba(255,255,255,.18), 0 10px 30px rgba(68,54,102,.15); transition: transform .15s ease, background .4s ease; user-select: none; -webkit-user-select: none; }
+      .magic-block.holding { transform: scale(1.12); }
+      .magic-block .magic-label { font-size: clamp(28px, 7vw, 40px); font-weight: 1000; color: #fff; text-shadow: 0 3px 0 rgba(0,0,0,.15); opacity: .9; }
+      .magic-ring { position: relative; width: clamp(160px, 50vw, 220px); height: 8px; border-radius: 99px; background: #e8e0d0; overflow: hidden; }
+      .magic-ring-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f9b84d, #f37870); transition: width .05s linear; }
+      .magic-hint { text-align: center; color: var(--ink); font-size: 18px; font-weight: 800; }
+      .magic-colors-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+      .magic-color-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,.6); box-shadow: 0 2px 0 rgba(68,54,102,.10); transition: transform .15s ease; }
+      .magic-color-dot.current { transform: scale(1.3); border-color: var(--purple); border-width: 3px; }
+
+      /* ---------- 触摸游戏：滑动彩虹琴（F-6.16） ---------- */
+      .piano-stage { display: flex; flex-direction: column; gap: 16px; padding: 20px 0; }
+      .piano-label { text-align: center; color: var(--ink); font-size: 18px; font-weight: 800; }
+      .piano-keys { display: flex; gap: 4px; height: clamp(160px, 30vh, 220px); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 0 rgba(68,54,102,.12); touch-action: none; user-select: none; -webkit-user-select: none; }
+      .piano-key { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 16px; cursor: pointer; transition: filter .08s ease, transform .08s ease; position: relative; }
+      .piano-key .key-note { font-size: 14px; font-weight: 900; color: rgba(255,255,255,.85); }
+      .piano-key .key-color { font-size: 12px; font-weight: 800; color: rgba(255,255,255,.7); margin-bottom: 4px; }
+      .piano-key.active { filter: brightness(1.25); transform: scaleY(.97); }
+      .piano-key.active::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(180deg, rgba(255,255,255,.4), transparent); pointer-events: none; }
+      .piano-hint { text-align: center; color: var(--ink); font-size: 16px; font-weight: 700; }
+
+      /* ---------- 触摸游戏：双指捏合放大（F-6.17） ---------- */
+      .pinch-stage { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px 0; }
+      .pinch-viewport { position: relative; width: 100%; height: clamp(300px, 50vh, 420px); border: 4px solid rgba(255,255,255,.72); border-radius: 24px; background: linear-gradient(180deg, #e8f4ff 0%, #fff7e8 100%); overflow: hidden; touch-action: none; display: grid; place-items: center; }
+      .pinch-item { display: grid; place-items: center; width: 120px; height: 120px; transform-origin: center center; transition: transform .05s linear; will-change: transform; }
+      .pinch-item .shape-art { width: 100%; height: 100%; }
+      .pinch-item .shape-art.shape-triangle { border-right: 60px solid transparent; border-bottom: 104px solid var(--s-color); border-left: 60px solid transparent; }
+      .pinch-item .shape-art.shape-heart { width: 80%; height: 70%; margin-top: 8px; }
+      .pinch-item .tone-art { width: 100%; height: 100%; }
+      .pinch-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+      .pinch-btn { padding: 10px 20px; border: 0; border-radius: 16px; color: #fff; background: var(--purple); box-shadow: 0 4px 0 rgba(48,35,98,.25); cursor: pointer; font: inherit; font-size: 16px; font-weight: 900; touch-action: manipulation; }
+      .pinch-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(48,35,98,.25); }
+      .pinch-btn.pinch-next { background: #ef8b55; box-shadow: 0 4px 0 rgba(133,67,36,.22); }
+      .pinch-scale-label { text-align: center; color: #7c728c; font-size: 14px; font-weight: 800; }
+      .pinch-hint { text-align: center; color: var(--ink); font-size: 16px; font-weight: 700; }
+
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
     </style>
   </head>
@@ -442,6 +596,54 @@
               <span class="mode-desc">点一点颜色和形状，听声音、看动画，无压力自由学</span>
               <span class="mode-tag">2岁+ 自由玩</span>
             </button>
+          </div>
+
+          <div class="home-section">
+            <h2 class="home-section-title"><span class="sec-emoji">👆</span>触摸游戏</h2>
+            <div class="mode-grid-3">
+              <button class="mode-card mc-balloon" data-mode="balloon" type="button">
+                <span class="mode-emoji">🎈</span>
+                <span class="mode-name">气球戳戳乐</span>
+                <span class="mode-desc">戳破彩色气球，听声音看动画</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-doodle" data-mode="doodle" type="button">
+                <span class="mode-emoji">🖍️</span>
+                <span class="mode-name">颜色涂鸦板</span>
+                <span class="mode-desc">用手指画画，自由涂色</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-bubble" data-mode="bubble" type="button">
+                <span class="mode-emoji">🫧</span>
+                <span class="mode-name">气泡纸</span>
+                <span class="mode-desc">戳泡泡，啵啵啵真好玩</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-puzzle" data-mode="puzzle" type="button">
+                <span class="mode-emoji">🧩</span>
+                <span class="mode-name">形状拼拼乐</span>
+                <span class="mode-desc">拖拽形状到对应轮廓</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-magic" data-mode="magic" type="button">
+                <span class="mode-emoji">🎩</span>
+                <span class="mode-name">长按变色魔术</span>
+                <span class="mode-desc">长按颜色块，变魔术</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-piano" data-mode="piano" type="button">
+                <span class="mode-emoji">🎹</span>
+                <span class="mode-name">滑动彩虹琴</span>
+                <span class="mode-desc">滑动琴键，弹奏彩虹旋律</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+              <button class="mode-card mc-pinch" data-mode="pinch" type="button">
+                <span class="mode-emoji">🔍</span>
+                <span class="mode-name">放大镜探索</span>
+                <span class="mode-desc">双指捏合放大缩小形状</span>
+                <span class="mode-tag">触摸游戏</span>
+              </button>
+            </div>
           </div>
         </section>
 
@@ -522,6 +724,78 @@
             <div class="finish-actions">
               <button class="next-level-button" id="enlightenNextButton" type="button">继续学习</button>
               <button class="home-button" id="enlightenHomeButton" type="button">换个玩法</button>
+            </div>
+          </div>
+
+          <!-- 触摸游戏：气球戳戳乐（F-6.11） -->
+          <div id="balloonArea" hidden>
+            <div class="balloon-hint" id="balloonHint">戳一戳彩色气球吧！</div>
+            <div class="balloon-stage" id="balloonStage"></div>
+          </div>
+
+          <!-- 触摸游戏：颜色涂鸦板（F-6.12） -->
+          <div id="doodleArea" hidden>
+            <div class="doodle-wrap">
+              <canvas class="doodle-canvas" id="doodleCanvas"></canvas>
+              <div class="doodle-toolbar">
+                <div class="doodle-colors" id="doodleColors"></div>
+                <div class="doodle-size">
+                  <span>粗细</span>
+                  <input type="range" id="doodleSize" min="4" max="24" value="10" />
+                </div>
+                <button class="doodle-clear" id="doodleClear" type="button">🗑️ 清除</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 触摸游戏：气泡纸 popping（F-6.14） -->
+          <div id="bubbleArea" hidden>
+            <div class="bubble-hint" id="bubbleHint">戳泡泡，啵啵啵！</div>
+            <div class="bubble-stage">
+              <div class="bubble-grid" id="bubbleGrid"></div>
+            </div>
+          </div>
+
+          <!-- 触摸游戏：形状拼拼乐（F-6.13） -->
+          <div id="puzzleArea" hidden>
+            <div class="puzzle-hint" id="puzzleHint">把形状拖到一样的轮廓里吧！</div>
+            <div class="puzzle-progress" id="puzzleProgress"></div>
+            <div class="puzzle-stage" id="puzzleStage"></div>
+          </div>
+
+          <!-- 触摸游戏：长按变色魔术（F-6.15） -->
+          <div id="magicArea" hidden>
+            <div class="magic-stage">
+              <div class="magic-hint" id="magicHint">长按颜色块，看它变魔术！</div>
+              <div class="magic-block" id="magicBlock">
+                <span class="magic-label" id="magicLabel">红色</span>
+              </div>
+              <div class="magic-ring"><div class="magic-ring-fill" id="magicRingFill"></div></div>
+              <div class="magic-colors-row" id="magicColorsRow"></div>
+            </div>
+          </div>
+
+          <!-- 触摸游戏：滑动彩虹琴（F-6.16） -->
+          <div id="pianoArea" hidden>
+            <div class="piano-stage">
+              <div class="piano-label">用手指滑动琴键，弹奏彩虹旋律</div>
+              <div class="piano-keys" id="pianoKeys"></div>
+              <div class="piano-hint" id="pianoHint">划过琴键就能发声哦！</div>
+            </div>
+          </div>
+
+          <!-- 触摸游戏：双指捏合放大（F-6.17） -->
+          <div id="pinchArea" hidden>
+            <div class="pinch-stage">
+              <div class="pinch-hint" id="pinchHint">用两根手指捏合，放大缩小形状！</div>
+              <div class="pinch-viewport" id="pinchViewport">
+                <div class="pinch-item" id="pinchItem"></div>
+              </div>
+              <div class="pinch-scale-label" id="pinchScaleLabel">缩放: 100%</div>
+              <div class="pinch-controls">
+                <button class="pinch-btn pinch-next" id="pinchNext" type="button">🔄 换一个</button>
+                <button class="pinch-btn" id="pinchReset" type="button">↩️ 复原</button>
+              </div>
             </div>
           </div>
         </section>
@@ -625,7 +899,14 @@
         shapes: { name: '形状闯关', emoji: '🔷', color: '#e8853a' },
         'enlighten-color': { name: '颜色启蒙', emoji: '🐣', color: '#fd7e5a' },
         'enlighten-shape': { name: '形状启蒙', emoji: '🐣', color: '#fd7e5a' },
-        explore: { name: '自由探索', emoji: '✨', color: '#e84393' }
+        explore: { name: '自由探索', emoji: '✨', color: '#e84393' },
+        balloon: { name: '气球戳戳乐', emoji: '🎈', color: '#f4511e' },
+        doodle: { name: '颜色涂鸦板', emoji: '🖍️', color: '#43a047' },
+        bubble: { name: '气泡纸', emoji: '🫧', color: '#1e88e5' },
+        puzzle: { name: '形状拼拼乐', emoji: '🧩', color: '#8e24aa' },
+        magic: { name: '长按变色魔术', emoji: '🎩', color: '#e64a19' },
+        piano: { name: '滑动彩虹琴', emoji: '🎹', color: '#00acc1' },
+        pinch: { name: '放大镜探索', emoji: '🔍', color: '#7cb342' }
       };
 
       let mode = 'levels';
@@ -812,6 +1093,13 @@
         document.getElementById('exploreArea').hidden = true;
         document.getElementById('enlightenArea').hidden = true;
         document.getElementById('enlightenCelebrate').hidden = true;
+        document.getElementById('balloonArea').hidden = true;
+        document.getElementById('doodleArea').hidden = true;
+        document.getElementById('bubbleArea').hidden = true;
+        document.getElementById('puzzleArea').hidden = true;
+        document.getElementById('magicArea').hidden = true;
+        document.getElementById('pianoArea').hidden = true;
+        document.getElementById('pinchArea').hidden = true;
         el.modeBadge.textContent = `${MODES[key].emoji} ${MODES[key].name}`;
         stopSpeech(); stopTimer();
         if (key === 'levels') { el.gameArea.hidden = false; startLevels(); }
@@ -822,6 +1110,13 @@
         else if (key === 'enlighten-color') { document.getElementById('enlightenArea').hidden = false; startEnlighten('color'); }
         else if (key === 'enlighten-shape') { document.getElementById('enlightenArea').hidden = false; startEnlighten('shape'); }
         else if (key === 'explore') { document.getElementById('exploreArea').hidden = false; startExplore(); }
+        else if (key === 'balloon') { document.getElementById('balloonArea').hidden = false; startBalloon(); }
+        else if (key === 'doodle') { document.getElementById('doodleArea').hidden = false; startDoodle(); }
+        else if (key === 'bubble') { document.getElementById('bubbleArea').hidden = false; startBubble(); }
+        else if (key === 'puzzle') { document.getElementById('puzzleArea').hidden = false; startPuzzle(); }
+        else if (key === 'magic') { document.getElementById('magicArea').hidden = false; startMagic(); }
+        else if (key === 'piano') { document.getElementById('pianoArea').hidden = false; startPiano(); }
+        else if (key === 'pinch') { document.getElementById('pinchArea').hidden = false; startPinch(); }
       }
 
       /* ===== 模式一：经典闯关 ===== */
@@ -1086,11 +1381,18 @@
       function starRow(n) { return Array.from({ length: 3 }, (_, i) => `<span class="star-cell">${i < n ? '★' : '☆'}</span>`).join(''); }
 
       function finishGame() {
-        stopTimer(); stopSpeech();
+        stopTimer(); stopSpeech(); stopBalloon();
         el.gameArea.hidden = true;
         document.getElementById('exploreArea').hidden = true;
         document.getElementById('enlightenArea').hidden = true;
         document.getElementById('enlightenCelebrate').hidden = true;
+        document.getElementById('balloonArea').hidden = true;
+        document.getElementById('doodleArea').hidden = true;
+        document.getElementById('bubbleArea').hidden = true;
+        document.getElementById('puzzleArea').hidden = true;
+        document.getElementById('magicArea').hidden = true;
+        document.getElementById('pianoArea').hidden = true;
+        document.getElementById('pinchArea').hidden = true;
         const useShapeStars = mode === 'shapes';
         const stars = useShapeStars
           ? Math.max(...(shapeLevelStars.length ? shapeLevelStars : [starsFor(mode)]))
@@ -1444,13 +1746,709 @@
         }
       }
       document.getElementById('enlightenHomeButton').addEventListener('click', goHome);
+
+      /* ===== 模式八：气球戳戳乐（F-6.11） ===== */
+      let balloonTimer = null;
+      let balloonActive = false;
+      const balloonColors = [
+        { name: '红色', hex: '#ef6b67' }, { name: '橙色', hex: '#f59a45' },
+        { name: '黄色', hex: '#f4cd4e' }, { name: '绿色', hex: '#6dbf6e' },
+        { name: '青色', hex: '#3ec6bd' }, { name: '蓝色', hex: '#5a9fe0' },
+        { name: '紫色', hex: '#a27bd0' }, { name: '粉色', hex: '#ee89b8' }
+      ];
+
+      function startBalloon() {
+        balloonActive = true;
+        const stage = document.getElementById('balloonStage');
+        stage.innerHTML = '';
+        spawnBalloon();
+        spawnBalloon();
+        spawnBalloon();
+        balloonTimer = setInterval(() => {
+          if (balloonActive && stage.querySelectorAll('.balloon:not(.popping)').length < 6) {
+            spawnBalloon();
+          }
+        }, 1500);
+        speak('戳一戳彩色气球吧');
+      }
+      function stopBalloon() {
+        balloonActive = false;
+        if (balloonTimer) { clearInterval(balloonTimer); balloonTimer = null; }
+      }
+      function spawnBalloon() {
+        const stage = document.getElementById('balloonStage');
+        if (!stage || !balloonActive) return;
+        const color = pick(balloonColors);
+        const balloon = document.createElement('div');
+        balloon.className = 'balloon';
+        balloon.style.left = `${10 + Math.random() * 80}%`;
+        balloon.style.top = `${20 + Math.random() * 60}%`;
+        balloon.style.animation = `balloon-float ${2 + Math.random() * 2}s ease-in-out infinite alternate`;
+        balloon.innerHTML = `<div class="balloon-body" style="background:${color.hex};"></div><div class="balloon-string"></div>`;
+        balloon.addEventListener('pointerdown', e => {
+          e.preventDefault();
+          popBalloon(balloon, color, e);
+        });
+        stage.appendChild(balloon);
+        // 自动消失（10 秒后飘走）
+        setTimeout(() => {
+          if (balloon.parentNode && !balloon.classList.contains('popping')) {
+            balloon.style.transition = 'transform 2s ease-in, opacity 2s ease-in';
+            balloon.style.transform = 'translateY(-200px)';
+            balloon.style.opacity = '0';
+            setTimeout(() => balloon.remove(), 2000);
+          }
+        }, 10000);
+      }
+      function popBalloon(balloon, color, e) {
+        if (balloon.classList.contains('popping')) return;
+        balloon.classList.add('popping');
+        playCorrect();
+        spawnBurst(e.clientX, e.clientY, 16);
+        speak(color.name);
+        document.getElementById('balloonHint').innerHTML = `戳到了<strong style="color:${color.hex}">${color.name}</strong>气球！`;
+        recordMastery('color', color.name, true);
+        setTimeout(() => balloon.remove(), 400);
+      }
+
+      /* ===== 模式九：颜色涂鸦板（F-6.12） ===== */
+      let doodleCtx = null;
+      let doodleDrawing = false;
+      let doodleColor = '#ef6b67';
+      let doodleSize = 10;
+      let doodleLastX = 0, doodleLastY = 0;
+
+      function startDoodle() {
+        const canvas = document.getElementById('doodleCanvas');
+        const wrap = canvas.parentElement;
+        // 设置 canvas 实际像素尺寸（考虑 devicePixelRatio）
+        const dpr = window.devicePixelRatio || 1;
+        const rect = wrap.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = Math.max(280, Math.min(420, rect.height || 320)) * dpr;
+        canvas.style.height = `${Math.max(280, Math.min(420, rect.height || 320))}px`;
+        doodleCtx = canvas.getContext('2d');
+        doodleCtx.scale(dpr, dpr);
+        doodleCtx.lineCap = 'round';
+        doodleCtx.lineJoin = 'round';
+        doodleCtx.lineWidth = doodleSize;
+        doodleCtx.strokeStyle = doodleColor;
+
+        // 渲染颜色选择条
+        const colorsEl = document.getElementById('doodleColors');
+        colorsEl.innerHTML = '';
+        colors.forEach(c => {
+          const pen = document.createElement('button');
+          pen.className = 'doodle-pen' + (c.hex === doodleColor ? ' active' : '');
+          pen.type = 'button';
+          pen.style.background = c.hex;
+          pen.setAttribute('aria-label', c.name);
+          pen.addEventListener('click', () => {
+            doodleColor = c.hex;
+            doodleCtx.strokeStyle = c.hex;
+            colorsEl.querySelectorAll('.doodle-pen').forEach(p => p.classList.remove('active'));
+            pen.classList.add('active');
+            speak(c.name);
+          });
+          colorsEl.appendChild(pen);
+        });
+
+        // 绑定绘画事件（Pointer Events）
+        canvas.onpointerdown = e => {
+          e.preventDefault();
+          doodleDrawing = true;
+          canvas.setPointerCapture(e.pointerId);
+          const pos = getDoodlePos(e);
+          doodleLastX = pos.x; doodleLastY = pos.y;
+          // 画一个点
+          doodleCtx.beginPath();
+          doodleCtx.arc(pos.x, pos.y, doodleSize / 2, 0, Math.PI * 2);
+          doodleCtx.fillStyle = doodleColor;
+          doodleCtx.fill();
+        };
+        canvas.onpointermove = e => {
+          if (!doodleDrawing) return;
+          e.preventDefault();
+          const pos = getDoodlePos(e);
+          doodleCtx.beginPath();
+          doodleCtx.moveTo(doodleLastX, doodleLastY);
+          doodleCtx.lineTo(pos.x, pos.y);
+          doodleCtx.stroke();
+          doodleLastX = pos.x; doodleLastY = pos.y;
+        };
+        canvas.onpointerup = e => { doodleDrawing = false; };
+        canvas.onpointercancel = e => { doodleDrawing = false; };
+
+        speak('用手指画画吧');
+      }
+      function getDoodlePos(e) {
+        const canvas = document.getElementById('doodleCanvas');
+        const rect = canvas.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      }
+      document.getElementById('doodleSize').addEventListener('input', e => {
+        doodleSize = parseInt(e.target.value);
+        if (doodleCtx) doodleCtx.lineWidth = doodleSize;
+      });
+      document.getElementById('doodleClear').addEventListener('click', () => {
+        const canvas = document.getElementById('doodleCanvas');
+        if (doodleCtx) {
+          doodleCtx.clearRect(0, 0, canvas.width, canvas.height);
+          playTick();
+        }
+      });
+
+      /* ===== 模式十：气泡纸 popping（F-6.14） ===== */
+      let bubbleActive = false;
+
+      function startBubble() {
+        bubbleActive = true;
+        renderBubbles();
+        speak('戳泡泡，啵啵啵');
+      }
+      function renderBubbles() {
+        const grid = document.getElementById('bubbleGrid');
+        grid.innerHTML = '';
+        const count = 24;
+        for (let i = 0; i < count; i++) {
+          const color = pick(colors);
+          const bubble = document.createElement('button');
+          bubble.className = 'bubble';
+          bubble.type = 'button';
+          bubble.style.background = color.hex;
+          bubble.setAttribute('aria-label', `${color.name}气泡`);
+          bubble.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            if (bubble.classList.contains('popped')) return;
+            bubble.classList.add('popped');
+            playPop();
+            speak(color.name);
+            recordMastery('color', color.name, true);
+            setTimeout(() => bubble.remove(), 300);
+            // 全部戳完自动生成新一批
+            setTimeout(() => {
+              if (bubbleActive && grid.querySelectorAll('.bubble:not(.popped)').length === 0) {
+                renderBubbles();
+                document.getElementById('bubbleHint').textContent = '新一批泡泡来啦！';
+              }
+            }, 350);
+          });
+          grid.appendChild(bubble);
+        }
+        document.getElementById('bubbleHint').textContent = '戳泡泡，啵啵啵！';
+      }
+      function playPop() {
+        if (!soundEnabled) return;
+        try {
+          audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          const t = audioCtx.currentTime;
+          const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(800, t);
+          o.frequency.exponentialRampToValueAtTime(200, t + 0.08);
+          g.gain.setValueAtTime(0.1, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          o.connect(g).connect(audioCtx.destination);
+          o.start(t); o.stop(t + 0.1);
+        } catch (e) {}
+      }
+
+      /* ===== 模式十一：形状拼拼乐（F-6.13） ===== */
+      let puzzleActive = false;
+      let puzzleSlots = [];
+      let puzzlePieces = [];
+      let puzzleDone = 0;
+      let puzzleTotal = 0;
+
+      function startPuzzle() {
+        puzzleActive = true;
+        puzzleDone = 0;
+        const stage = document.getElementById('puzzleStage');
+        stage.innerHTML = '';
+
+        // 随机选 3~4 种形状
+        const count = 3 + Math.floor(Math.random() * 2);
+        const chosen = shuffled(shapes).slice(0, count);
+        puzzleTotal = chosen.length;
+
+        // 渲染进度点
+        const progress = document.getElementById('puzzleProgress');
+        progress.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'puzzle-dot';
+          progress.appendChild(dot);
+        }
+
+        // 等待 stage 布局完成后设置尺寸
+        requestAnimationFrame(() => {
+          const rect = stage.getBoundingClientRect();
+          const w = rect.width;
+          const h = rect.height;
+          const slotSize = 80;
+          const pieceSize = 80;
+
+          // 在上半区域放置轮廓（slots），下半区域放置碎片（pieces）
+          puzzleSlots = [];
+          puzzlePieces = [];
+
+          // 轮廓位置：均匀分布在上半区
+          const slotY = h * 0.2;
+          const slotSpacing = w / (count + 1);
+          chosen.forEach((shape, i) => {
+            const slot = document.createElement('div');
+            slot.className = 'puzzle-slot';
+            slot.style.width = `${slotSize}px`;
+            slot.style.height = `${slotSize}px`;
+            slot.style.left = `${slotSpacing * (i + 1) - slotSize / 2}px`;
+            slot.style.top = `${slotY}px`;
+            slot.dataset.shape = shape.name;
+
+            const slotArt = document.createElement('span');
+            slotArt.className = `shape-art ${shape.cls}`;
+            slotArt.style.setProperty('--s-color', shape.color);
+            slot.appendChild(slotArt);
+            stage.appendChild(slot);
+            puzzleSlots.push({ el: slot, shape, x: slotSpacing * (i + 1) - slotSize / 2, y: slotY });
+          });
+
+          // 碎片位置：打乱后放在下半区
+          const shuffledShapes = shuffled(chosen);
+          const pieceY = h * 0.6;
+          const pieceSpacing = w / (count + 1);
+          shuffledShapes.forEach((shape, i) => {
+            const piece = document.createElement('div');
+            piece.className = 'puzzle-piece';
+            piece.style.width = `${pieceSize}px`;
+            piece.style.height = `${pieceSize}px`;
+            const px = pieceSpacing * (i + 1) - pieceSize / 2;
+            piece.style.left = `${px}px`;
+            piece.style.top = `${pieceY}px`;
+            piece.dataset.shape = shape.name;
+
+            const art = document.createElement('span');
+            art.className = `shape-art ${shape.cls}`;
+            art.style.setProperty('--s-color', shape.color);
+            piece.appendChild(art);
+            stage.appendChild(piece);
+
+            const pieceData = { el: piece, shape, startX: px, startY: pieceY, currentX: px, currentY: pieceY };
+            puzzlePieces.push(pieceData);
+            bindPuzzleDrag(piece, pieceData);
+          });
+        });
+
+        speak('把形状拖到一样的轮廓里吧');
+      }
+
+      function stopPuzzle() { puzzleActive = false; }
+
+      function bindPuzzleDrag(piece, data) {
+        let dragging = false;
+        let startPX = 0, startPY = 0;
+        let origLeft = 0, origTop = 0;
+
+        piece.addEventListener('pointerdown', e => {
+          if (!puzzleActive || piece.classList.contains('snapped')) return;
+          e.preventDefault();
+          dragging = true;
+          piece.setPointerCapture(e.pointerId);
+          piece.style.zIndex = '10';
+          piece.style.transition = 'none';
+          startPX = e.clientX;
+          startPY = e.clientY;
+          origLeft = data.currentX;
+          origTop = data.currentY;
+        });
+
+        piece.addEventListener('pointermove', e => {
+          if (!dragging) return;
+          e.preventDefault();
+          const dx = e.clientX - startPX;
+          const dy = e.clientY - startPY;
+          data.currentX = origLeft + dx;
+          data.currentY = origTop + dy;
+          piece.style.left = `${data.currentX}px`;
+          piece.style.top = `${data.currentY}px`;
+        });
+
+        piece.addEventListener('pointerup', e => {
+          if (!dragging) return;
+          dragging = false;
+          piece.style.zIndex = '2';
+
+          // 检测是否拖到了匹配的 slot
+          const slot = puzzleSlots.find(s => s.shape.name === data.shape.name);
+          if (slot) {
+            const pieceRect = piece.getBoundingClientRect();
+            const slotRect = slot.el.getBoundingClientRect();
+            const distX = Math.abs(pieceRect.left + pieceRect.width / 2 - slotRect.left - slotRect.width / 2);
+            const distY = Math.abs(pieceRect.top + pieceRect.height / 2 - slotRect.top - slotRect.height / 2);
+
+            if (distX < 50 && distY < 50) {
+              // 吸附到 slot
+              piece.classList.add('snapped');
+              piece.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1), left .25s ease, top .25s ease';
+              piece.style.left = `${slot.x}px`;
+              piece.style.top = `${slot.y}px`;
+              data.currentX = slot.x;
+              data.currentY = slot.y;
+              slot.el.classList.add('filled');
+              playCorrect();
+              speak(data.shape.name);
+              recordMastery('shape', data.shape.name, true);
+              puzzleDone += 1;
+              document.getElementById('puzzleHint').innerHTML = `<strong>太棒啦！</strong>${data.shape.name}拼好了！`;
+
+              // 更新进度点
+              const dots = document.querySelectorAll('#puzzleProgress .puzzle-dot');
+              if (dots[puzzleDone - 1]) dots[puzzleDone - 1].classList.add('done');
+
+              if (puzzleDone >= puzzleTotal) {
+                setTimeout(() => {
+                  confettiBurst();
+                  speak('全部拼完啦！你真棒！');
+                  document.getElementById('puzzleHint').innerHTML = '🎉 全部拼完啦！';
+                  setTimeout(() => { if (puzzleActive) startPuzzle(); }, 2500);
+                }, 400);
+              }
+              return;
+            }
+          }
+
+          // 没有匹配，弹回原位
+          piece.style.transition = 'left .3s ease, top .3s ease';
+          piece.style.left = `${data.startX}px`;
+          piece.style.top = `${data.startY}px`;
+          data.currentX = data.startX;
+          data.currentY = data.startY;
+          playWrong();
+        });
+
+        piece.addEventListener('pointercancel', () => {
+          if (!dragging) return;
+          dragging = false;
+          piece.style.zIndex = '2';
+          piece.style.transition = 'left .3s ease, top .3s ease';
+          piece.style.left = `${data.startX}px`;
+          piece.style.top = `${data.startY}px`;
+          data.currentX = data.startX;
+          data.currentY = data.startY;
+        });
+      }
+
+      /* ===== 模式十二：长按变色魔术（F-6.15） ===== */
+      let magicActive = false;
+      let magicHoldTimer = null;
+      let magicProgressTimer = null;
+      let magicColorIndex = 0;
+      const magicColorList = [
+        { name: '红色', hex: '#ef6b67' }, { name: '橙色', hex: '#f59a45' },
+        { name: '黄色', hex: '#f4cd4e' }, { name: '绿色', hex: '#6dbf6e' },
+        { name: '青色', hex: '#3ec6bd' }, { name: '蓝色', hex: '#5a9fe0' },
+        { name: '紫色', hex: '#a27bd0' }, { name: '粉色', hex: '#ee89b8' }
+      ];
+
+      function startMagic() {
+        magicActive = true;
+        magicColorIndex = 0;
+        renderMagicColors();
+        updateMagicBlock();
+        speak('长按颜色块，看它变魔术');
+      }
+
+      function stopMagic() {
+        magicActive = false;
+        if (magicHoldTimer) { clearTimeout(magicHoldTimer); magicHoldTimer = null; }
+        if (magicProgressTimer) { clearInterval(magicProgressTimer); magicProgressTimer = null; }
+      }
+
+      function renderMagicColors() {
+        const row = document.getElementById('magicColorsRow');
+        row.innerHTML = '';
+        magicColorList.forEach((c, i) => {
+          const dot = document.createElement('div');
+          dot.className = 'magic-color-dot' + (i === magicColorIndex ? ' current' : '');
+          dot.style.background = c.hex;
+          row.appendChild(dot);
+        });
+      }
+
+      function updateMagicBlock() {
+        const color = magicColorList[magicColorIndex];
+        const block = document.getElementById('magicBlock');
+        const label = document.getElementById('magicLabel');
+        block.style.background = color.hex;
+        label.textContent = color.name;
+        document.getElementById('magicRingFill').style.width = '0%';
+        renderMagicColors();
+
+        // 绑定长按事件
+        block.onpointerdown = e => {
+          if (!magicActive) return;
+          e.preventDefault();
+          block.setPointerCapture(e.pointerId);
+          block.classList.add('holding');
+          document.getElementById('magicHint').textContent = '继续按住…';
+
+          let progress = 0;
+          magicProgressTimer = setInterval(() => {
+            progress += 2;
+            document.getElementById('magicRingFill').style.width = `${Math.min(progress, 100)}%`;
+          }, 40);
+
+          magicHoldTimer = setTimeout(() => {
+            // 变魔术：切换到下一个颜色
+            magicColorIndex = (magicColorIndex + 1) % magicColorList.length;
+            const nextColor = magicColorList[magicColorIndex];
+            block.style.background = nextColor.hex;
+            label.textContent = nextColor.name;
+            document.getElementById('magicRingFill').style.width = '0%';
+            block.classList.remove('holding');
+            playCorrect();
+            spawnBurst(e.clientX, e.clientY, 20);
+            speak(nextColor.name);
+            recordMastery('color', nextColor.name, true);
+            document.getElementById('magicHint').innerHTML = `变出了<strong style="color:${nextColor.hex}">${nextColor.name}</strong>！再长按试试`;
+            renderMagicColors();
+            if (magicProgressTimer) { clearInterval(magicProgressTimer); magicProgressTimer = null; }
+          }, 2000);
+        };
+
+        block.onpointerup = e => {
+          block.classList.remove('holding');
+          if (magicHoldTimer) { clearTimeout(magicHoldTimer); magicHoldTimer = null; }
+          if (magicProgressTimer) { clearInterval(magicProgressTimer); magicProgressTimer = null; }
+          document.getElementById('magicRingFill').style.width = '0%';
+          if (magicActive) document.getElementById('magicHint').textContent = '长按颜色块，看它变魔术！';
+        };
+
+        block.onpointercancel = () => {
+          block.classList.remove('holding');
+          if (magicHoldTimer) { clearTimeout(magicHoldTimer); magicHoldTimer = null; }
+          if (magicProgressTimer) { clearInterval(magicProgressTimer); magicProgressTimer = null; }
+          document.getElementById('magicRingFill').style.width = '0%';
+        };
+      }
+
+      /* ===== 模式十三：滑动彩虹琴（F-6.16） ===== */
+      let pianoActive = false;
+      let pianoLastKey = null;
+      const pianoKeysData = [
+        { note: 'Do', freq: 262, color: '红色', hex: '#ef6b67' },
+        { note: 'Re', freq: 294, color: '橙色', hex: '#f59a45' },
+        { note: 'Mi', freq: 330, color: '黄色', hex: '#f4cd4e' },
+        { note: 'Fa', freq: 349, color: '绿色', hex: '#6dbf6e' },
+        { note: 'Sol', freq: 392, color: '青色', hex: '#3ec6bd' },
+        { note: 'La', freq: 440, color: '蓝色', hex: '#5a9fe0' },
+        { note: 'Si', freq: 494, color: '紫色', hex: '#a27bd0' }
+      ];
+
+      function startPiano() {
+        pianoActive = true;
+        pianoLastKey = null;
+        const keysEl = document.getElementById('pianoKeys');
+        keysEl.innerHTML = '';
+
+        pianoKeysData.forEach((key, i) => {
+          const keyEl = document.createElement('div');
+          keyEl.className = 'piano-key';
+          keyEl.style.background = key.hex;
+          keyEl.dataset.index = i;
+          keyEl.innerHTML = `<span class="key-color">${key.color}</span><span class="key-note">${key.note}</span>`;
+          keysEl.appendChild(keyEl);
+        });
+
+        // 使用 pointer events 在整个琴键区域上追踪滑动
+        keysEl.onpointerdown = e => {
+          if (!pianoActive) return;
+          e.preventDefault();
+          keysEl.setPointerCapture(e.pointerId);
+          playPianoKeyAt(e.clientX, e.clientY);
+        };
+        keysEl.onpointermove = e => {
+          if (!pianoActive || !e.buttons) return;
+          e.preventDefault();
+          playPianoKeyAt(e.clientX, e.clientY);
+        };
+        keysEl.onpointerup = () => { pianoLastKey = null; };
+        keysEl.onpointercancel = () => { pianoLastKey = null; };
+        keysEl.onpointerleave = () => { pianoLastKey = null; };
+
+        speak('用手指滑动琴键，弹奏彩虹旋律');
+      }
+
+      function stopPiano() {
+        pianoActive = false;
+        pianoLastKey = null;
+      }
+
+      function playPianoKeyAt(x, y) {
+        const keysEl = document.getElementById('pianoKeys');
+        const rect = keysEl.getBoundingClientRect();
+        // 只处理在琴键区域内的触摸
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return;
+        const keyWidth = rect.width / pianoKeysData.length;
+        const index = Math.floor((x - rect.left) / keyWidth);
+        if (index < 0 || index >= pianoKeysData.length) return;
+        if (pianoLastKey === index) return; // 同一个键不重复触发
+        pianoLastKey = index;
+
+        const key = pianoKeysData[index];
+        const keyEl = keysEl.children[index];
+        // 视觉反馈
+        keysEl.querySelectorAll('.piano-key').forEach(k => k.classList.remove('active'));
+        keyEl.classList.add('active');
+        setTimeout(() => keyEl.classList.remove('active'), 150);
+
+        // 播放音符
+        tone(key.freq, 0.3, 'sine', 0, 0.12);
+        tone(key.freq * 2, 0.15, 'sine', 0, 0.04); // 泛音
+        document.getElementById('pianoHint').innerHTML = `<strong style="color:${key.hex}">${key.color}</strong> · ${key.note} 🔊`;
+      }
+
+      /* ===== 模式十四：双指捏合放大（F-6.17） ===== */
+      let pinchActive = false;
+      let pinchScale = 1;
+      let pinchStartDist = 0;
+      let pinchStartScale = 1;
+      let pinchItemIndex = 0;
+      let pinchItems = [];
+
+      function startPinch() {
+        pinchActive = true;
+        pinchScale = 1;
+        pinchItemIndex = 0;
+
+        // 构建可探索的物品列表（形状 + 颜色物体）
+        pinchItems = [
+          { type: 'shape', cls: 'shape-circle', color: '#5a9fe0', name: '圆形' },
+          { type: 'shape', cls: 'shape-square', color: '#f59a45', name: '方形' },
+          { type: 'shape', cls: 'shape-triangle', color: '#6dbf6e', name: '三角形' },
+          { type: 'shape', cls: 'shape-star', color: '#f4cd4e', name: '星形' },
+          { type: 'shape', cls: 'shape-heart', color: '#ef6b67', name: '心形' },
+          { type: 'shape', cls: 'shape-diamond', color: '#a27bd0', name: '菱形' },
+          { type: 'art', cls: 'art-apple', color: '#ef6b67', name: '苹果' },
+          { type: 'art', cls: 'art-fish', color: '#5a9fe0', name: '小鱼' },
+          { type: 'art', cls: 'art-butterfly', color: '#a27bd0', name: '蝴蝶' },
+          { type: 'art', cls: 'art-flower', color: '#ee89b8', name: '小花' }
+        ];
+
+        renderPinchItem();
+        bindPinchGestures();
+        speak('用两根手指捏合，放大缩小形状');
+      }
+
+      function renderPinchItem() {
+        const item = pinchItems[pinchItemIndex];
+        const container = document.getElementById('pinchItem');
+        container.innerHTML = '';
+        container.style.transform = `scale(${pinchScale})`;
+        if (item.type === 'shape') {
+          const art = document.createElement('span');
+          art.className = `shape-art ${item.cls}`;
+          art.style.setProperty('--s-color', item.color);
+          container.appendChild(art);
+        } else {
+          const art = document.createElement('span');
+          art.className = `tone-art ${item.cls}`;
+          art.style.setProperty('--tone', item.color);
+          container.appendChild(art);
+        }
+        document.getElementById('pinchScaleLabel').textContent = `缩放: ${Math.round(pinchScale * 100)}% · ${item.name}`;
+      }
+
+      function bindPinchGestures() {
+        const viewport = document.getElementById('pinchViewport');
+
+        viewport.onpointerdown = e => {
+          if (!pinchActive) return;
+          e.preventDefault();
+          // 单指点击：朗读名称
+          if (viewport.querySelectorAll(':hover').length > 0 || e.isPrimary) {
+            // 检查是否已有两指
+          }
+        };
+
+        // 使用 touch 事件处理双指捏合（pointer events 对多指支持不一致）
+        viewport.ontouchstart = e => {
+          if (!pinchActive) return;
+          e.preventDefault();
+          if (e.touches.length === 2) {
+            pinchStartDist = getPinchDist(e.touches);
+            pinchStartScale = pinchScale;
+          } else if (e.touches.length === 1) {
+            // 单指点击朗读
+            const item = pinchItems[pinchItemIndex];
+            speak(item.name);
+            if (item.type === 'shape') recordMastery('shape', item.name, true);
+            else recordMastery('color', item.color, true);
+          }
+        };
+
+        viewport.ontouchmove = e => {
+          if (!pinchActive) return;
+          e.preventDefault();
+          if (e.touches.length === 2) {
+            const dist = getPinchDist(e.touches);
+            const ratio = dist / pinchStartDist;
+            pinchScale = Math.max(0.3, Math.min(3, pinchStartScale * ratio));
+            document.getElementById('pinchItem').style.transform = `scale(${pinchScale})`;
+            document.getElementById('pinchScaleLabel').textContent = `缩放: ${Math.round(pinchScale * 100)}% · ${pinchItems[pinchItemIndex].name}`;
+          }
+        };
+
+        // 鼠标滚轮支持（桌面端）
+        viewport.onwheel = e => {
+          if (!pinchActive) return;
+          e.preventDefault();
+          pinchScale = Math.max(0.3, Math.min(3, pinchScale - e.deltaY * 0.001));
+          document.getElementById('pinchItem').style.transform = `scale(${pinchScale})`;
+          document.getElementById('pinchScaleLabel').textContent = `缩放: ${Math.round(pinchScale * 100)}% · ${pinchItems[pinchItemIndex].name}`;
+        };
+
+        // 点击朗读（桌面端鼠标点击）
+        viewport.onclick = e => {
+          if (!pinchActive) return;
+          const item = pinchItems[pinchItemIndex];
+          speak(item.name);
+          if (item.type === 'shape') recordMastery('shape', item.name, true);
+          else recordMastery('color', item.color, true);
+        };
+      }
+
+      function getPinchDist(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      document.getElementById('pinchNext').addEventListener('click', () => {
+        pinchItemIndex = (pinchItemIndex + 1) % pinchItems.length;
+        pinchScale = 1;
+        renderPinchItem();
+        const item = pinchItems[pinchItemIndex];
+        speak(item.name);
+      });
+      document.getElementById('pinchReset').addEventListener('click', () => {
+        pinchScale = 1;
+        renderPinchItem();
+      });
+
       function goHome() {
-        stopTimer(); stopSpeech();
+        stopTimer(); stopSpeech(); stopBalloon(); stopPuzzle(); stopMagic(); stopPiano();
         el.finish.classList.remove('show'); el.levelComplete.classList.remove('show');
         el.gameArea.hidden = false;
         document.getElementById('exploreArea').hidden = true;
         document.getElementById('enlightenArea').hidden = true;
         document.getElementById('enlightenCelebrate').hidden = true;
+        document.getElementById('balloonArea').hidden = true;
+        document.getElementById('doodleArea').hidden = true;
+        document.getElementById('bubbleArea').hidden = true;
+        document.getElementById('puzzleArea').hidden = true;
+        document.getElementById('magicArea').hidden = true;
+        document.getElementById('pianoArea').hidden = true;
+        document.getElementById('pinchArea').hidden = true;
         el.play.hidden = true; el.home.hidden = false;
       }
       function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
@@ -1462,6 +2460,13 @@
         el.soundButton.setAttribute('aria-label', soundEnabled ? '关闭声音' : '打开声音');
         if (soundEnabled && mode === 'levels') speak(`请选择 ${currentColor.name}`);
       });
+
+      // ---- PWA Service Worker 注册（F-6.1） ----
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>
