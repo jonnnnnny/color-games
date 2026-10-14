@@ -123,6 +123,8 @@
       .peek-ring { position: absolute; inset: -14px; border-radius: 44px; border: 5px solid var(--purple); opacity: 0; pointer-events: none; }
       .peek-ring.show { opacity: .35; animation: ring-shrink 2.5s linear forwards; }
       .tone-art { --tone: #ef6b67; position: relative; display: block; width: 72%; height: 72%; overflow: hidden; border-radius: 50%; background: var(--tone); box-shadow: inset -13px -13px 0 rgba(0,0,0,.10), inset 12px 12px 0 rgba(255,255,255,.16); }
+      /* 浅色（白/黄/灰）实物在米黄背景上对比度低，加一圈跟随形状的描边光晕 */
+      .tone-art.is-pale { filter: drop-shadow(0 0 4px rgba(95,85,130,.45)); }
       .tone-art::before, .tone-art::after { content: ""; position: absolute; display: block; background: color-mix(in srgb, var(--tone) 75%, white); }
       .tone-art::before { width: 32%; height: 32%; top: 12%; left: 15%; border-radius: 50%; opacity: .72; }
       .tone-art::after { width: 42%; height: 14%; bottom: 15%; right: 11%; border-radius: 99px; opacity: .62; transform: rotate(-26deg); }
@@ -1068,6 +1070,7 @@
         el.colorName.classList.toggle('blurred', !showName);
         el.object.className = `tone-art ${item.art}`;
         el.object.style.setProperty('--tone', color.hex);
+        el.object.classList.toggle('is-pale', !!color.pale);
         el.objectBox.classList.toggle('hidden-art', !showName);
         el.objectBox.classList.toggle('peek', showName && mode === 'memory');
       }
@@ -1335,6 +1338,7 @@
         el.objectBox.classList.remove('hidden-art', 'peek');
         el.object.className = 'tone-art shape-circle';
         el.object.style.setProperty('--tone', target.hex);
+        el.object.classList.toggle('is-pale', !!target.pale);
         el.roundText.textContent = `第 ${round + 1} / ${oddDeck.length} 题`;
         el.progressFill.style.width = `${((round + 1) / oddDeck.length) * 100}%`;
         el.starsText.textContent = `★ ${score}`;
@@ -1678,6 +1682,7 @@
           nameEl.style.color = item.hex;
           obj.className = `tone-art ${item.art}`;
           obj.style.setProperty('--tone', item.hex);
+          obj.classList.toggle('is-pale', !!((typeof colorByName !== 'undefined' && colorByName.get(item.name)) || {}).pale);
           objBox.classList.remove('hidden-art');
           hintEl.innerHTML = `点一点<strong>${item.name}</strong>吧！`;
           // 1 选 1：只有一个选项，点击即正确
