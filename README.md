@@ -54,10 +54,10 @@
 直接打开 `index.html`，或在项目目录启动任意静态文件服务器：
 
 ```bash
-python3 -m http.server 8090
+python3 -m http.server 8080
 ```
 
-打开 `http://localhost:8090`。
+打开 `http://localhost:8080`。
 
 > **注意**：Service Worker 和 Web Speech API 需要 HTTPS 环境（localhost 除外）。本地预览时 PWA 功能可能受限，建议通过部署后的 HTTPS 地址体验完整功能。
 
@@ -65,18 +65,18 @@ python3 -m http.server 8090
 
 ### 方式一：Docker 自部署
 
-项目包含 `Dockerfile` 和 `docker-compose.yml`，容器监听 `8090` 端口，提供 `/healthz` 健康检查。
+项目包含 `Dockerfile` 和 `docker-compose.yml`，容器监听 `8080` 端口，提供 `/healthz` 健康检查。
 
 ```bash
 # 构建并运行
 docker build -t color-games .
-docker run --rm -p 8090:8090 color-games
+docker run --rm -p 8080:8080 color-games
 
 # 或使用 Docker Compose
 docker compose up -d
 ```
 
-部署后访问 `http://你的服务器IP:8090`。
+部署后访问 `http://你的服务器IP:8080`。
 
 ### 方式二：一键部署到 Render
 

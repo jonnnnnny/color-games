@@ -1,5 +1,5 @@
 // Service Worker — 彩虹小课堂 PWA 离线缓存
-const CACHE_NAME = 'color-games-v2.5';
+const CACHE_NAME = 'color-games-v2.6';
 const CACHE_URLS = [
   './',
   './index.html',
@@ -11,6 +11,11 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(CACHE_URLS)).then(() => self.skipWaiting())
   );
+});
+
+// 收到 SKIP_WAITING 消息后立即激活
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // 激活：清理旧缓存
