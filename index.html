@@ -553,6 +553,8 @@
       .num-dots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px auto; max-width: 280px; }
       .num-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--purple); box-shadow: 0 3px 0 rgba(68,54,102,.15); }
       .num-dot.empty { background: transparent; border: 3px dashed #ccc; box-shadow: none; }
+      .num-obj { font-size: clamp(30px, 8vw, 42px); line-height: 1.25; filter: drop-shadow(0 2px 2px rgba(68,54,102,.15)); }
+      .mem-dots .num-obj { font-size: 17px; line-height: 1.3; }
       .num-hint { font-size: 18px; font-weight: 800; color: var(--ink); margin: 12px 0; }
       .num-choices { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
       .num-choice { min-width: 100px; min-height: 100px; border: 0; border-radius: 24px; font-size: clamp(40px, 10vw, 64px); font-weight: 900; color: #fff; cursor: pointer; box-shadow: 0 6px 0 rgba(0,0,0,.15); transition: transform .1s; touch-action: manipulation; }
@@ -2348,7 +2350,7 @@
       function findPuzzleTarget(clientX, clientY, piece) {
         for (const slot of puzzleSlots) {
           if (slot.el.classList.contains('filled')) continue;
-          if (slot.piece.shape !== piece.shape) continue;
+          if (slot.idx !== piece.origIdx) continue;
           const r = slot.el.getBoundingClientRect();
           if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) return slot;
         }
@@ -2684,6 +2686,21 @@
         const objs = numbers[n.value].objects;
         return pick(objs);
       }
+      /* 数字具象化：用实物 emoji 代替抽象圆点 */
+      const OBJ_EMOJI = {
+        '苹果': '🍎', '星星': '⭐', '小花': '🌸', '小鸭': '🐤',
+        '积木': '🧱', '糖果': '🍬', '车轮': '🛞', '叶子': '🍃',
+        '手指': '👆', '草莓': '🍓', '气球': '🎈', '彩虹': '🌈',
+        '螃蟹': '🦀', '葡萄': '🍇', '空盒子': '📦', '空手': '✋'
+      };
+      function makeObjects(value) {
+        const item = numbers[value];
+        if (value === 0) return '<span class="num-obj">📦</span>';
+        const emoji = OBJ_EMOJI[item.objects[0]] || '●';
+        let html = '';
+        for (let i = 0; i < value; i++) html += `<span class="num-obj">${emoji}</span>`;
+        return html;
+      }
 
       /* ===== 数字启蒙（F-7.2） ===== */
       let numEnlightenLevel = 0, numEnlightenIdx = 0, numEnlightenQueue = [];
@@ -2719,7 +2736,7 @@
         c.innerHTML = `
           <div class="num-hint">第 ${numEnlightenLevel + 1} 关 · ${lv.name}</div>
           <div class="num-big" style="color:${item.color}">${item.display}</div>
-          <div class="num-dots">${makeDots(item.value, item.color)}</div>
+          <div class="num-dots">${makeObjects(item.value)}</div>
           <div class="num-hint">${item.value === 0 ? '0 表示没有哦' : `这是 ${item.value}`}</div>
           <div class="num-choices" id="numEnlightenChoices"></div>
         `;
@@ -2737,7 +2754,7 @@
             if (n.value === item.value) {
               btn.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
               score++; el.scoreText.textContent = `⭐ ${score}`;
-              speak(item.value === 0 ? `真棒！这是 0，零，表示没有` : `真棒！这是 ${item.value}`);
+              speak(item.value === 0 ? `真棒！0 就是没有，答对啦！` : `真棒！答对啦！`);
               recordMastery('number', String(item.value), true);
               document.querySelectorAll('#numEnlightenChoices .num-choice').forEach(b => b.disabled = true);
               numEnlightenIdx++;
@@ -2750,7 +2767,7 @@
           });
           choicesEl.appendChild(btn);
         });
-        setTimeout(() => speak(item.value === 0 ? `这是 0，零，表示没有。跟我读，零——` : `这是 ${item.value}，跟我读，${item.name}——`), 200);
+        setTimeout(() => speak(item.value === 0 ? `0 表示没有，跟我读，零——` : `跟我读，${item.name}——`), 200);
       }
 
       /* ===== 数数小能手（F-7.3） ===== */
@@ -2963,7 +2980,7 @@
           const car = document.createElement('div');
           car.className = 'order-car';
           car.dataset.idx = i;
-          car.textContent = i + 1;
+          car.textContent = numbers[seq[i]].display;
           trainEl.appendChild(car);
         });
         shuffledSeq.forEach((v, i) => {
@@ -3078,7 +3095,7 @@
           if (card.type === 'num') {
             front.innerHTML = `<span class="mem-num" style="color:${numbers[card.value].color}">${numbers[card.value].display}</span>`;
           } else {
-            front.innerHTML = `<div class="mem-dots">${makeDots(card.value, numbers[card.value].color)}</div>`;
+            front.innerHTML = `<div class="mem-dots">${makeObjects(card.value)}</div>`;
           }
           inner.appendChild(back);
           inner.appendChild(front);
