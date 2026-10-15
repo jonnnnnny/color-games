@@ -486,6 +486,29 @@
       .puzzle-dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd6c8; transition: background .2s ease, transform .2s ease; }
       .puzzle-dot.done { background: #6dbf6e; transform: scale(1.2); }
 
+      /* ---------- 形状拼拼乐增强：图案拼图 ---------- */
+      .puzzle-pattern-name { text-align: center; font-size: 20px; font-weight: 900; color: var(--purple); margin: 4px 0 8px; }
+      .puzzle-board { position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 1; border-radius: 20px; background: rgba(115,102,220,.06); border: 2px solid rgba(115,102,220,.12); }
+      .puzzle-target { position: absolute; display: grid; place-items: center; border: 2px dashed rgba(115,102,220,.3); border-radius: 14px; transition: all .2s ease; }
+      .puzzle-target .shape-art { width: 60%; height: 60%; opacity: .2; }
+      .puzzle-target .shape-art.shape-triangle { border-right: 22px solid transparent; border-bottom: 38px solid var(--s-color); border-left: 22px solid transparent; }
+      .puzzle-target .shape-art.shape-heart { width: 50%; height: 44%; margin-top: 6px; }
+      .puzzle-target.filled { border-color: transparent; background: transparent; }
+      .puzzle-target.filled .shape-art { opacity: 1; }
+      .puzzle-target.hover { border-color: var(--purple); border-style: solid; background: rgba(115,102,220,.12); transform: scale(1.05); }
+      .puzzle-tray { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 16px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,.6); }
+      .puzzle-tray-piece { width: 60px; height: 60px; border-radius: 16px; background: #fff; display: grid; place-items: center; box-shadow: 0 4px 0 rgba(68,54,102,.12), 0 6px 16px rgba(68,54,102,.08); cursor: grab; touch-action: none; user-select: none; transition: transform .1s ease; }
+      .puzzle-tray-piece:active { cursor: grabbing; transform: scale(1.1); }
+      .puzzle-tray-piece.dragging { opacity: .5; z-index: 100; }
+      .puzzle-tray-piece.placed { visibility: hidden; pointer-events: none; }
+      .puzzle-tray-piece .shape-art { width: 38px; height: 38px; }
+      .puzzle-tray-piece .shape-art.shape-triangle { border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
+      .puzzle-tray-piece .shape-art.shape-heart { width: 30px; height: 26px; margin-top: 3px; }
+      .puzzle-ghost { position: fixed; pointer-events: none; z-index: 9999; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,.9); box-shadow: 0 8px 24px rgba(68,54,102,.2); transform: scale(1.1); }
+      .puzzle-ghost .shape-art { width: 38px; height: 38px; }
+      .puzzle-ghost .shape-art.shape-triangle { border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
+      .puzzle-ghost .shape-art.shape-heart { width: 30px; height: 26px; margin-top: 3px; }
+
       /* ---------- 触摸游戏：长按变色魔术（F-6.15） ---------- */
       .magic-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 30px 16px; }
       .magic-block { display: grid; place-items: center; width: clamp(160px, 50vw, 220px); height: clamp(160px, 50vw, 220px); border-radius: 36px; cursor: pointer; touch-action: none; box-shadow: inset 0 -12px 0 rgba(0,0,0,.12), inset 10px 10px 0 rgba(255,255,255,.18), 0 10px 30px rgba(68,54,102,.15); transition: transform .15s ease, background .4s ease; user-select: none; -webkit-user-select: none; }
@@ -523,6 +546,60 @@
       .pinch-btn.pinch-next { background: #ef8b55; box-shadow: 0 4px 0 rgba(133,67,36,.22); }
       .pinch-scale-label { text-align: center; color: #7c728c; font-size: 14px; font-weight: 800; }
       .pinch-hint { text-align: center; color: var(--ink); font-size: 16px; font-weight: 700; }
+
+      /* ===== 数字游戏通用样式 ===== */
+      .num-area { max-width: 640px; margin: 0 auto; padding: 12px; text-align: center; }
+      .num-big { font-size: clamp(80px, 20vw, 160px); font-weight: 900; line-height: 1; color: var(--purple); text-shadow: 0 4px 0 rgba(68,54,102,.12); }
+      .num-dots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px auto; max-width: 280px; }
+      .num-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--purple); box-shadow: 0 3px 0 rgba(68,54,102,.15); }
+      .num-dot.empty { background: transparent; border: 3px dashed #ccc; box-shadow: none; }
+      .num-hint { font-size: 18px; font-weight: 800; color: var(--ink); margin: 12px 0; }
+      .num-choices { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+      .num-choice { min-width: 100px; min-height: 100px; border: 0; border-radius: 24px; font-size: clamp(40px, 10vw, 64px); font-weight: 900; color: #fff; cursor: pointer; box-shadow: 0 6px 0 rgba(0,0,0,.15); transition: transform .1s; touch-action: manipulation; }
+      .num-choice:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.15); }
+      .num-choice.is-correct { animation: pop .4s ease; }
+      .num-choice.is-wrong { animation: shake .4s ease; }
+      .num-celebrate { text-align: center; padding: 40px 20px; }
+      .num-celebrate h2 { font-size: 28px; color: var(--purple); }
+      .num-celebrate p { font-size: 18px; color: var(--ink); margin: 12px 0 24px; }
+
+      /* 数数小能手 */
+      .count-objects { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px auto; min-height: 120px; }
+      .count-item { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; transition: transform .15s; position: relative; touch-action: manipulation; }
+      .count-item.counted { transform: scale(1.15); }
+      .count-item .count-badge { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid var(--purple); font-size: 12px; font-weight: 900; color: var(--purple); display: flex; align-items: center; justify-content: center; }
+
+      /* 数字找朋友 */
+      .match-top { font-size: clamp(60px, 15vw, 100px); font-weight: 900; color: var(--purple); margin: 16px 0; }
+      .match-groups { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+      .match-group { min-width: 100px; min-height: 120px; border: 3px solid #e0d8f0; border-radius: 20px; background: #fff; cursor: pointer; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; justify-content: center; padding: 12px; transition: all .2s; touch-action: manipulation; }
+      .match-group:hover { border-color: var(--purple); }
+      .match-group.is-correct { border-color: #6dbf6e; background: #e8f5e9; animation: pop .4s; }
+      .match-group.is-wrong { animation: shake .4s; }
+      .match-group .match-obj { width: 20px; height: 20px; border-radius: 50%; }
+
+      /* 数字排排队 */
+      .order-train { display: flex; gap: 8px; justify-content: center; margin: 20px auto; flex-wrap: wrap; }
+      .order-car { width: 70px; height: 80px; border: 3px dashed #d0c8e0; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: #ccc; background: #fafafa; }
+      .order-car.filled { border-style: solid; border-color: var(--purple); color: #fff; background: var(--purple); animation: pop .3s; }
+      .order-cards { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+      .order-card { width: 64px; height: 64px; border: 0; border-radius: 16px; font-size: 32px; font-weight: 900; color: #fff; cursor: grab; box-shadow: 0 4px 0 rgba(0,0,0,.15); touch-action: none; user-select: none; }
+      .order-card:active { cursor: grabbing; }
+      .order-card.dragging { opacity: .6; transform: scale(1.1); }
+      .order-card.placed { visibility: hidden; }
+
+      /* 数物配对卡 */
+      .mem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 400px; margin: 20px auto; }
+      .mem-card { aspect-ratio: 1; border: 0; border-radius: 16px; cursor: pointer; perspective: 600px; touch-action: manipulation; }
+      .mem-card-inner { position: relative; width: 100%; height: 100%; transition: transform .4s; transform-style: preserve-3d; }
+      .mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
+      .mem-card.matched .mem-card-inner { transform: rotateY(180deg); opacity: .5; }
+      .mem-face { position: absolute; inset: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .mem-back { background: linear-gradient(135deg, #7366dc, #a27bd0); font-size: 32px; color: #fff; }
+      .mem-front { background: #fff; border: 2px solid #e0d8f0; transform: rotateY(180deg); font-weight: 900; }
+      .mem-front .mem-num { font-size: clamp(32px, 8vw, 48px); color: var(--purple); }
+      .mem-front .mem-dots { display: flex; flex-wrap: wrap; gap: 3px; max-width: 60px; justify-content: center; }
+      .mem-front .mem-dots .num-dot { width: 12px; height: 12px; }
 
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
     </style>
@@ -651,6 +728,42 @@
               </button>
             </div>
           </div>
+
+          <div class="home-section">
+            <h2 class="home-section-title"><span class="sec-emoji">🔢</span>数字游戏</h2>
+            <div class="mode-grid-3">
+              <button class="mode-card mc-enlighten" data-mode="num-enlighten" type="button">
+                <span class="mode-emoji">🔢</span>
+                <span class="mode-name">数字启蒙</span>
+                <span class="mode-desc">认数字 0-10，点一点学认数</span>
+                <span class="mode-tag">2岁+</span>
+              </button>
+              <button class="mode-card mc-levels" data-mode="num-count" type="button">
+                <span class="mode-emoji">🅰️</span>
+                <span class="mode-name">数数小能手</span>
+                <span class="mode-desc">点一点物体，数一数有几个</span>
+                <span class="mode-tag">2.5岁+</span>
+              </button>
+              <button class="mode-card mc-memory" data-mode="num-match" type="button">
+                <span class="mode-emoji">🤝</span>
+                <span class="mode-name">数字找朋友</span>
+                <span class="mode-desc">数字和数量配对找朋友</span>
+                <span class="mode-tag">3岁+</span>
+              </button>
+              <button class="mode-card mc-timed" data-mode="num-order" type="button">
+                <span class="mode-emoji">🚂</span>
+                <span class="mode-name">数字排排队</span>
+                <span class="mode-desc">拖拽数字卡片，排好队</span>
+                <span class="mode-tag">3.5岁+</span>
+              </button>
+              <button class="mode-card mc-odd" data-mode="num-memory" type="button">
+                <span class="mode-emoji">🃏</span>
+                <span class="mode-name">数物配对卡</span>
+                <span class="mode-desc">翻牌记忆，数字配数量</span>
+                <span class="mode-tag">3岁+</span>
+              </button>
+            </div>
+          </div>
         </section>
 
         <section class="game-card" id="play" aria-live="polite" hidden>
@@ -764,9 +877,12 @@
 
           <!-- 触摸游戏：形状拼拼乐（F-6.13） -->
           <div id="puzzleArea" hidden>
-            <div class="puzzle-hint" id="puzzleHint">把形状拖到一样的轮廓里吧！</div>
+            <div class="puzzle-hint" id="puzzleHint">把形状拖到对应的轮廓里，拼出图案吧！</div>
             <div class="puzzle-progress" id="puzzleProgress"></div>
-            <div class="puzzle-stage" id="puzzleStage"></div>
+            <div class="puzzle-pattern-name" id="puzzlePatternName"></div>
+            <div class="puzzle-board" id="puzzleBoard"></div>
+            <div class="puzzle-tray" id="puzzleTray"></div>
+            <div class="puzzle-stage" id="puzzleStage" style="display:none"></div>
           </div>
 
           <!-- 触摸游戏：长按变色魔术（F-6.15） -->
@@ -802,6 +918,19 @@
                 <button class="pinch-btn pinch-next" id="pinchNext" type="button">🔄 换一个</button>
                 <button class="pinch-btn" id="pinchReset" type="button">↩️ 复原</button>
               </div>
+            </div>
+          </div>
+
+          <!-- ===== 数字游戏区域 ===== -->
+          <div id="numArea" hidden>
+            <div class="num-area" id="numContent"></div>
+          </div>
+          <div id="numCelebrate" hidden>
+            <div class="num-celebrate">
+              <h2 id="numCelebrateTitle">太棒啦！</h2>
+              <p id="numCelebrateText"></p>
+              <button class="pinch-btn pinch-next" id="numNextButton" type="button">再玩一次</button>
+              <button class="pinch-btn" id="numHomeButton" type="button">🏠 回首页</button>
             </div>
           </div>
         </section>
@@ -855,6 +984,21 @@
         { name: '菱形', display: '菱 形', cls: 'shape-diamond', color: '#a27bd0' }
       ];
       const shapeByName = new Map(shapes.map(s => [s.name, s]));
+
+      /* ---------- 数字基础库（F-7.1） ---------- */
+      const numbers = [
+        { value: 0, name: '零', display: '0', color: '#bdbdbd', objects: ['空盒子', '空手'] },
+        { value: 1, name: '一', display: '1', color: '#ef6b67', objects: ['苹果', '星星'] },
+        { value: 2, name: '二', display: '2', color: '#f59a45', objects: ['小花', '小鸭'] },
+        { value: 3, name: '三', display: '3', color: '#f4cd4e', objects: ['积木', '糖果'] },
+        { value: 4, name: '四', display: '4', color: '#6dbf6e', objects: ['车轮', '叶子'] },
+        { value: 5, name: '五', display: '5', color: '#3ec6bd', objects: ['手指', '草莓'] },
+        { value: 6, name: '六', display: '6', color: '#5a9fe0', objects: ['气球'] },
+        { value: 7, name: '七', display: '7', color: '#a27bd0', objects: ['彩虹'] },
+        { value: 8, name: '八', display: '8', color: '#ee89b8', objects: ['螃蟹'] },
+        { value: 9, name: '九', display: '9', color: '#b07a52', objects: ['葡萄'] },
+        { value: 10, name: '十', display: '10', color: '#7366dc', objects: ['手指'] }
+      ];
 
       /* ---------- 形状-物体关联（F-1.5） ---------- */
       const shapeObjects = {
@@ -934,7 +1078,12 @@
         puzzle: { name: '形状拼拼乐', emoji: '🧩', color: '#8e24aa' },
         magic: { name: '长按变色魔术', emoji: '🎩', color: '#e64a19' },
         piano: { name: '滑动彩虹琴', emoji: '🎹', color: '#00acc1' },
-        pinch: { name: '放大镜探索', emoji: '🔍', color: '#7cb342' }
+        pinch: { name: '放大镜探索', emoji: '🔍', color: '#7cb342' },
+        'num-enlighten': { name: '数字启蒙', emoji: '🔢', color: '#5a9fe0' },
+        'num-count': { name: '数数小能手', emoji: '🅰️', color: '#6dbf6e' },
+        'num-match': { name: '数字找朋友', emoji: '🤝', color: '#f59a45' },
+        'num-order': { name: '数字排排队', emoji: '🚂', color: '#ef6b67' },
+        'num-memory': { name: '数物配对卡', emoji: '🃏', color: '#a27bd0' }
       };
 
       let mode = 'levels';
@@ -1129,6 +1278,8 @@
         document.getElementById('magicArea').hidden = true;
         document.getElementById('pianoArea').hidden = true;
         document.getElementById('pinchArea').hidden = true;
+        document.getElementById('numArea').hidden = true;
+        document.getElementById('numCelebrate').hidden = true;
         el.modeBadge.textContent = `${MODES[key].emoji} ${MODES[key].name}`;
         stopSpeech(); stopTimer();
         if (key === 'levels') { el.gameArea.hidden = false; startLevels(); }
@@ -1146,6 +1297,11 @@
         else if (key === 'magic') { document.getElementById('magicArea').hidden = false; startMagic(); }
         else if (key === 'piano') { document.getElementById('pianoArea').hidden = false; startPiano(); }
         else if (key === 'pinch') { document.getElementById('pinchArea').hidden = false; startPinch(); }
+        else if (key === 'num-enlighten') { document.getElementById('numArea').hidden = false; startNumEnlighten(); }
+        else if (key === 'num-count') { document.getElementById('numArea').hidden = false; startNumCount(); }
+        else if (key === 'num-match') { document.getElementById('numArea').hidden = false; startNumMatch(); }
+        else if (key === 'num-order') { document.getElementById('numArea').hidden = false; startNumOrder(); }
+        else if (key === 'num-memory') { document.getElementById('numArea').hidden = false; startNumMemory(); }
       }
 
       /* ===== 模式一：经典闯关 ===== */
@@ -1984,189 +2140,222 @@
         } catch (e) {}
       }
 
-      /* ===== 模式十一：形状拼拼乐（F-6.13） ===== */
+      /* ===== 模式十一：形状拼拼乐 — 图案拼图（F-6.13 增强） ===== */
       let puzzleActive = false;
-      let puzzleSlots = [];
-      let puzzlePieces = [];
       let puzzleDone = 0;
       let puzzleTotal = 0;
+      let puzzleSlots = [];
+      let puzzlePatternIdx = 0;
+
+      // 图案库：每个图案由多个形状碎片组成，拼完组成一个完整图案
+      const puzzlePatterns = [
+        {
+          name: '小房子',
+          pieces: [
+            { shape: '方形', cls: 'shape-square', color: '#f59a45', x: 30, y: 50, w: 40, h: 35 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 25, y: 18, w: 50, h: 35 },
+            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 33, y: 58, w: 14, h: 18 },
+            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 52, y: 55, w: 12, h: 12 }
+          ]
+        },
+        {
+          name: '小汽车',
+          pieces: [
+            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 15, y: 40, w: 70, h: 28 },
+            { shape: '方形', cls: 'shape-square', color: '#a27bd0', x: 30, y: 22, w: 40, h: 22 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 20, y: 65, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 64, y: 65, w: 16, h: 16 }
+          ]
+        },
+        {
+          name: '雪人',
+          pieces: [
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 55, w: 40, h: 38 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 35, y: 22, w: 30, h: 28 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 42, y: 30, w: 16, h: 12 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 40, y: 28, w: 6, h: 6 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 54, y: 28, w: 6, h: 6 }
+          ]
+        },
+        {
+          name: '火箭',
+          pieces: [
+            { shape: '方形', cls: 'shape-square', color: '#e8e8e8', x: 38, y: 25, w: 24, h: 45 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 20 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 22, y: 55, w: 16, h: 18 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 62, y: 55, w: 16, h: 18 }
+          ]
+        },
+        {
+          name: '蝴蝶',
+          pieces: [
+            { shape: '方形', cls: 'shape-square', color: '#3c3653', x: 46, y: 35, w: 8, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 18, y: 18, w: 30, h: 28 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 52, y: 18, w: 30, h: 28 },
+            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 22, y: 48, w: 24, h: 22 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 54, y: 48, w: 24, h: 22 }
+          ]
+        },
+        {
+          name: '冰淇淋',
+          pieces: [
+            { shape: '三角形', cls: 'shape-triangle', color: '#b07a52', x: 35, y: 45, w: 30, h: 45 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 30, y: 20, w: 40, h: 35 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 20 }
+          ]
+        }
+      ];
 
       function startPuzzle() {
         puzzleActive = true;
         puzzleDone = 0;
-        const stage = document.getElementById('puzzleStage');
-        stage.innerHTML = '';
+        puzzlePatternIdx = Math.floor(Math.random() * puzzlePatterns.length);
+        renderPuzzlePattern();
+      }
 
-        // 随机选 3~4 种形状
-        const count = 3 + Math.floor(Math.random() * 2);
-        const chosen = shuffled(shapes).slice(0, count);
-        puzzleTotal = chosen.length;
+      function renderPuzzlePattern() {
+        const pattern = puzzlePatterns[puzzlePatternIdx];
+        puzzleTotal = pattern.pieces.length;
+        puzzleDone = 0;
+        puzzleSlots = [];
 
-        // 渲染进度点
+        document.getElementById('puzzlePatternName').textContent = `拼一拼：${pattern.name}`;
+
         const progress = document.getElementById('puzzleProgress');
         progress.innerHTML = '';
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < puzzleTotal; i++) {
           const dot = document.createElement('div');
           dot.className = 'puzzle-dot';
           progress.appendChild(dot);
         }
 
-        // 等待 stage 布局完成后设置尺寸
-        requestAnimationFrame(() => {
-          const rect = stage.getBoundingClientRect();
-          const w = rect.width;
-          const h = rect.height;
-          const slotSize = 80;
-          const pieceSize = 80;
+        // 渲染拼图板上的目标轮廓
+        const board = document.getElementById('puzzleBoard');
+        board.innerHTML = '';
+        pattern.pieces.forEach((piece, i) => {
+          const target = document.createElement('div');
+          target.className = 'puzzle-target';
+          target.style.left = `${piece.x}%`;
+          target.style.top = `${piece.y}%`;
+          target.style.width = `${piece.w}%`;
+          target.style.height = `${piece.h}%`;
+          target.dataset.idx = i;
 
-          // 在上半区域放置轮廓（slots），下半区域放置碎片（pieces）
-          puzzleSlots = [];
-          puzzlePieces = [];
-
-          // 轮廓位置：均匀分布在上半区
-          const slotY = h * 0.2;
-          const slotSpacing = w / (count + 1);
-          chosen.forEach((shape, i) => {
-            const slot = document.createElement('div');
-            slot.className = 'puzzle-slot';
-            slot.style.width = `${slotSize}px`;
-            slot.style.height = `${slotSize}px`;
-            slot.style.left = `${slotSpacing * (i + 1) - slotSize / 2}px`;
-            slot.style.top = `${slotY}px`;
-            slot.dataset.shape = shape.name;
-
-            const slotArt = document.createElement('span');
-            slotArt.className = `shape-art ${shape.cls}`;
-            slotArt.style.setProperty('--s-color', shape.color);
-            slot.appendChild(slotArt);
-            stage.appendChild(slot);
-            puzzleSlots.push({ el: slot, shape, x: slotSpacing * (i + 1) - slotSize / 2, y: slotY });
-          });
-
-          // 碎片位置：打乱后放在下半区
-          const shuffledShapes = shuffled(chosen);
-          const pieceY = h * 0.6;
-          const pieceSpacing = w / (count + 1);
-          shuffledShapes.forEach((shape, i) => {
-            const piece = document.createElement('div');
-            piece.className = 'puzzle-piece';
-            piece.style.width = `${pieceSize}px`;
-            piece.style.height = `${pieceSize}px`;
-            const px = pieceSpacing * (i + 1) - pieceSize / 2;
-            piece.style.left = `${px}px`;
-            piece.style.top = `${pieceY}px`;
-            piece.dataset.shape = shape.name;
-
-            const art = document.createElement('span');
-            art.className = `shape-art ${shape.cls}`;
-            art.style.setProperty('--s-color', shape.color);
-            piece.appendChild(art);
-            stage.appendChild(piece);
-
-            const pieceData = { el: piece, shape, startX: px, startY: pieceY, currentX: px, currentY: pieceY };
-            puzzlePieces.push(pieceData);
-            bindPuzzleDrag(piece, pieceData);
-          });
+          const art = document.createElement('span');
+          art.className = `shape-art ${piece.cls}`;
+          art.style.setProperty('--s-color', piece.color);
+          target.appendChild(art);
+          board.appendChild(target);
+          puzzleSlots.push({ el: target, piece, idx: i });
         });
 
-        speak('把形状拖到一样的轮廓里吧');
+        // 渲染底部碎片托盘（打乱顺序）
+        const tray = document.getElementById('puzzleTray');
+        tray.innerHTML = '';
+        const shuffledPieces = shuffled(pattern.pieces.map((p, i) => ({ ...p, origIdx: i })));
+        shuffledPieces.forEach(piece => {
+          const el = document.createElement('div');
+          el.className = 'puzzle-tray-piece';
+          el.dataset.idx = piece.origIdx;
+
+          const art = document.createElement('span');
+          art.className = `shape-art ${piece.cls}`;
+          art.style.setProperty('--s-color', piece.color);
+          el.appendChild(art);
+          tray.appendChild(el);
+          bindPuzzleDragV2(el, piece);
+        });
+
+        document.getElementById('puzzleHint').innerHTML = `把形状拖到对应位置，拼出<strong>${pattern.name}</strong>吧！`;
+        speak(`把形状拖到对应位置，拼出${pattern.name}吧`);
+      }
+
+      function bindPuzzleDragV2(el, piece) {
+        let dragging = false;
+        let ghost = null;
+
+        el.addEventListener('pointerdown', e => {
+          if (!puzzleActive || el.classList.contains('placed')) return;
+          e.preventDefault();
+          dragging = true;
+          el.setPointerCapture(e.pointerId);
+          el.classList.add('dragging');
+
+          ghost = el.cloneNode(true);
+          ghost.classList.remove('dragging', 'placed');
+          ghost.classList.add('puzzle-ghost');
+          ghost.style.left = `${e.clientX - 30}px`;
+          ghost.style.top = `${e.clientY - 30}px`;
+          document.body.appendChild(ghost);
+        });
+
+        el.addEventListener('pointermove', e => {
+          if (!dragging || !ghost) return;
+          e.preventDefault();
+          ghost.style.left = `${e.clientX - 30}px`;
+          ghost.style.top = `${e.clientY - 30}px`;
+          puzzleSlots.forEach(s => s.el.classList.remove('hover'));
+          const target = findPuzzleTarget(e.clientX, e.clientY, piece);
+          if (target) target.el.classList.add('hover');
+        });
+
+        el.addEventListener('pointerup', e => {
+          if (!dragging) return;
+          dragging = false;
+          el.classList.remove('dragging');
+          puzzleSlots.forEach(s => s.el.classList.remove('hover'));
+          if (ghost) { ghost.remove(); ghost = null; }
+
+          const target = findPuzzleTarget(e.clientX, e.clientY, piece);
+          if (target && !target.el.classList.contains('filled')) {
+            el.classList.add('placed');
+            target.el.classList.add('filled');
+            target.el.innerHTML = '';
+            const art = document.createElement('span');
+            art.className = `shape-art ${piece.cls}`;
+            art.style.setProperty('--s-color', piece.color);
+            target.el.appendChild(art);
+            playCorrect();
+            speak(piece.shape);
+            recordMastery('shape', piece.shape, true);
+            puzzleDone++;
+            document.getElementById('puzzleHint').innerHTML = `<strong>太棒啦！</strong>${piece.shape}放好了！`;
+            const dots = document.querySelectorAll('#puzzleProgress .puzzle-dot');
+            if (dots[puzzleDone - 1]) dots[puzzleDone - 1].classList.add('done');
+
+            if (puzzleDone >= puzzleTotal) {
+              setTimeout(() => {
+                confettiBurst();
+                speak(`${puzzlePatterns[puzzlePatternIdx].name}拼完啦！你真棒！`);
+                document.getElementById('puzzleHint').innerHTML = `🎉 ${puzzlePatterns[puzzlePatternIdx].name}拼完啦！`;
+                setTimeout(() => { if (puzzleActive) startPuzzle(); }, 2800);
+              }, 400);
+            }
+          } else {
+            playWrong();
+          }
+        });
+
+        el.addEventListener('pointercancel', () => {
+          if (!dragging) return;
+          dragging = false;
+          el.classList.remove('dragging');
+          puzzleSlots.forEach(s => s.el.classList.remove('hover'));
+          if (ghost) { ghost.remove(); ghost = null; }
+        });
+      }
+
+      function findPuzzleTarget(clientX, clientY, piece) {
+        for (const slot of puzzleSlots) {
+          if (slot.el.classList.contains('filled')) continue;
+          if (slot.piece.shape !== piece.shape) continue;
+          const r = slot.el.getBoundingClientRect();
+          if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) return slot;
+        }
+        return null;
       }
 
       function stopPuzzle() { puzzleActive = false; }
-
-      function bindPuzzleDrag(piece, data) {
-        let dragging = false;
-        let startPX = 0, startPY = 0;
-        let origLeft = 0, origTop = 0;
-
-        piece.addEventListener('pointerdown', e => {
-          if (!puzzleActive || piece.classList.contains('snapped')) return;
-          e.preventDefault();
-          dragging = true;
-          piece.setPointerCapture(e.pointerId);
-          piece.style.zIndex = '10';
-          piece.style.transition = 'none';
-          startPX = e.clientX;
-          startPY = e.clientY;
-          origLeft = data.currentX;
-          origTop = data.currentY;
-        });
-
-        piece.addEventListener('pointermove', e => {
-          if (!dragging) return;
-          e.preventDefault();
-          const dx = e.clientX - startPX;
-          const dy = e.clientY - startPY;
-          data.currentX = origLeft + dx;
-          data.currentY = origTop + dy;
-          piece.style.left = `${data.currentX}px`;
-          piece.style.top = `${data.currentY}px`;
-        });
-
-        piece.addEventListener('pointerup', e => {
-          if (!dragging) return;
-          dragging = false;
-          piece.style.zIndex = '2';
-
-          // 检测是否拖到了匹配的 slot
-          const slot = puzzleSlots.find(s => s.shape.name === data.shape.name);
-          if (slot) {
-            const pieceRect = piece.getBoundingClientRect();
-            const slotRect = slot.el.getBoundingClientRect();
-            const distX = Math.abs(pieceRect.left + pieceRect.width / 2 - slotRect.left - slotRect.width / 2);
-            const distY = Math.abs(pieceRect.top + pieceRect.height / 2 - slotRect.top - slotRect.height / 2);
-
-            if (distX < 50 && distY < 50) {
-              // 吸附到 slot
-              piece.classList.add('snapped');
-              piece.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1), left .25s ease, top .25s ease';
-              piece.style.left = `${slot.x}px`;
-              piece.style.top = `${slot.y}px`;
-              data.currentX = slot.x;
-              data.currentY = slot.y;
-              slot.el.classList.add('filled');
-              playCorrect();
-              speak(data.shape.name);
-              recordMastery('shape', data.shape.name, true);
-              puzzleDone += 1;
-              document.getElementById('puzzleHint').innerHTML = `<strong>太棒啦！</strong>${data.shape.name}拼好了！`;
-
-              // 更新进度点
-              const dots = document.querySelectorAll('#puzzleProgress .puzzle-dot');
-              if (dots[puzzleDone - 1]) dots[puzzleDone - 1].classList.add('done');
-
-              if (puzzleDone >= puzzleTotal) {
-                setTimeout(() => {
-                  confettiBurst();
-                  speak('全部拼完啦！你真棒！');
-                  document.getElementById('puzzleHint').innerHTML = '🎉 全部拼完啦！';
-                  setTimeout(() => { if (puzzleActive) startPuzzle(); }, 2500);
-                }, 400);
-              }
-              return;
-            }
-          }
-
-          // 没有匹配，弹回原位
-          piece.style.transition = 'left .3s ease, top .3s ease';
-          piece.style.left = `${data.startX}px`;
-          piece.style.top = `${data.startY}px`;
-          data.currentX = data.startX;
-          data.currentY = data.startY;
-          playWrong();
-        });
-
-        piece.addEventListener('pointercancel', () => {
-          if (!dragging) return;
-          dragging = false;
-          piece.style.zIndex = '2';
-          piece.style.transition = 'left .3s ease, top .3s ease';
-          piece.style.left = `${data.startX}px`;
-          piece.style.top = `${data.startY}px`;
-          data.currentX = data.startX;
-          data.currentY = data.startY;
-        });
-      }
 
       /* ===== 模式十二：长按变色魔术（F-6.15） ===== */
       let magicActive = false;
@@ -2466,6 +2655,475 @@
         renderPinchItem();
       });
 
+      /* ===== 数字游戏通用工具 ===== */
+      const numContent = () => document.getElementById('numContent');
+      function showNumCelebrate(title, text, replayFn) {
+        document.getElementById('numArea').hidden = true;
+        document.getElementById('numCelebrate').hidden = false;
+        document.getElementById('numCelebrateTitle').textContent = title;
+        document.getElementById('numCelebrateText').textContent = text;
+        const nextBtn = document.getElementById('numNextButton');
+        nextBtn.onclick = () => {
+          document.getElementById('numCelebrate').hidden = true;
+          document.getElementById('numArea').hidden = false;
+          replayFn();
+        };
+        confettiBurst();
+        speak(title + ' ' + text);
+      }
+      document.getElementById('numHomeButton').addEventListener('click', goHome);
+      function makeDots(count, color) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+          html += `<span class="num-dot" style="background:${color}"></span>`;
+        }
+        if (count === 0) html = '<span class="num-dot empty"></span>';
+        return html;
+      }
+      function numObjectName(n) {
+        const objs = numbers[n.value].objects;
+        return pick(objs);
+      }
+
+      /* ===== 数字启蒙（F-7.2） ===== */
+      let numEnlightenLevel = 0, numEnlightenIdx = 0, numEnlightenQueue = [];
+      const numEnlightenLevels = [
+        { name: '认数 0-3', range: [0,1,2,3], choices: 2 },
+        { name: '认数 0-5', range: [0,1,2,3,4,5], choices: 2 },
+        { name: '认数 0-10', range: numbers.map(n => n.value), choices: 3 }
+      ];
+      function startNumEnlighten() {
+        numEnlightenLevel = 0; numEnlightenIdx = 0; score = 0;
+        el.livesText.hidden = true; el.timerText.hidden = true; el.progressRow.hidden = true; el.comboText.hidden = true;
+        el.scoreText.textContent = '⭐ 0';
+        buildNumEnlightenQueue();
+        renderNumEnlighten();
+      }
+      function buildNumEnlightenQueue() {
+        const lv = numEnlightenLevels[numEnlightenLevel];
+        numEnlightenQueue = shuffled(lv.range).map(v => numbers[v]);
+      }
+      function renderNumEnlighten() {
+        if (numEnlightenIdx >= numEnlightenQueue.length) {
+          numEnlightenLevel++;
+          if (numEnlightenLevel >= numEnlightenLevels.length) {
+            showNumCelebrate('太棒啦！', `你认识了 0 到 10 的数字！`, startNumEnlighten);
+            return;
+          }
+          buildNumEnlightenQueue();
+          numEnlightenIdx = 0;
+        }
+        const item = numEnlightenQueue[numEnlightenIdx];
+        const lv = numEnlightenLevels[numEnlightenLevel];
+        const c = numContent();
+        c.innerHTML = `
+          <div class="num-hint">第 ${numEnlightenLevel + 1} 关 · ${lv.name}</div>
+          <div class="num-big" style="color:${item.color}">${item.display}</div>
+          <div class="num-dots">${makeDots(item.value, item.color)}</div>
+          <div class="num-hint">${item.value === 0 ? '0 表示没有哦' : `这是 ${item.value}`}</div>
+          <div class="num-choices" id="numEnlightenChoices"></div>
+        `;
+        const choicesEl = document.getElementById('numEnlightenChoices');
+        const pool = lv.range.filter(v => v !== item.value);
+        const wrongs = shuffled(pool).slice(0, lv.choices - 1);
+        const allChoices = shuffled([item, ...wrongs.map(v => numbers[v])]);
+        allChoices.forEach(n => {
+          const btn = document.createElement('button');
+          btn.className = 'num-choice';
+          btn.type = 'button';
+          btn.style.background = n.color;
+          btn.textContent = n.display;
+          btn.addEventListener('click', e => {
+            if (n.value === item.value) {
+              btn.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
+              score++; el.scoreText.textContent = `⭐ ${score}`;
+              speak(item.value === 0 ? `真棒！这是 0，零，表示没有` : `真棒！这是 ${item.value}`);
+              recordMastery('number', String(item.value), true);
+              document.querySelectorAll('#numEnlightenChoices .num-choice').forEach(b => b.disabled = true);
+              numEnlightenIdx++;
+              setTimeout(renderNumEnlighten, 1000);
+            } else {
+              btn.classList.add('is-wrong'); playWrong();
+              speak('再看看哦');
+              setTimeout(() => btn.classList.remove('is-wrong'), 500);
+            }
+          });
+          choicesEl.appendChild(btn);
+        });
+        setTimeout(() => speak(item.value === 0 ? `这是 0，零，表示没有。跟我读，零——` : `这是 ${item.value}，跟我读，${item.name}——`), 200);
+      }
+
+      /* ===== 数数小能手（F-7.3） ===== */
+      let numCountLevel = 0, numCountIdx = 0, numCountTarget = 0, numCountCounted = 0;
+      const numCountLevels = [
+        { name: '点数 0-3', max: 3, choices: 2 },
+        { name: '点数 0-5', max: 5, choices: 3 },
+        { name: '点数 0-10', max: 10, choices: 3 }
+      ];
+      function startNumCount() {
+        numCountLevel = 0; numCountIdx = 0; score = 0;
+        el.livesText.hidden = true; el.timerText.hidden = true; el.progressRow.hidden = true; el.comboText.hidden = true;
+        el.scoreText.textContent = '⭐ 0';
+        renderNumCount();
+      }
+      function renderNumCount() {
+        const lv = numCountLevels[numCountLevel];
+        numCountTarget = Math.floor(Math.random() * (lv.max + 1));
+        numCountCounted = 0;
+        const c = numContent();
+        const objColor = pick(colors);
+        c.innerHTML = `
+          <div class="num-hint">第 ${numCountLevel + 1} 关 · ${lv.name}</div>
+          <div class="num-hint">数一数，有几个？点一点！</div>
+          <div class="count-objects" id="countObjects"></div>
+          <div class="num-choices" id="countChoices" style="display:none"></div>
+        `;
+        const objsEl = document.getElementById('countObjects');
+        if (numCountTarget === 0) {
+          objsEl.innerHTML = '<div class="num-hint" style="color:#999">这里什么都没有哦，选 0 吧！</div>';
+          showCountChoices();
+        } else {
+          for (let i = 0; i < numCountTarget; i++) {
+            const item = document.createElement('div');
+            item.className = 'count-item';
+            item.style.background = objColor.hex;
+            item.textContent = pick(['🍎','⭐','🎈','🌸','🐟','🍓','🦆','🍬']);
+            item.addEventListener('click', () => {
+              if (item.classList.contains('counted')) return;
+              item.classList.add('counted');
+              numCountCounted++;
+              playTick();
+              const badge = document.createElement('span');
+              badge.className = 'count-badge';
+              badge.textContent = numCountCounted;
+              item.appendChild(badge);
+              speak(String(numCountCounted));
+              if (numCountCounted >= numCountTarget) {
+                setTimeout(showCountChoices, 400);
+              }
+            });
+            objsEl.appendChild(item);
+          }
+        }
+        function showCountChoices() {
+          const choicesEl = document.getElementById('countChoices');
+          choicesEl.style.display = 'flex';
+          const pool = [];
+          for (let i = 0; i <= lv.max; i++) pool.push(i);
+          const wrongs = shuffled(pool.filter(v => v !== numCountTarget)).slice(0, lv.choices - 1);
+          const all = shuffled([numCountTarget, ...wrongs]);
+          choicesEl.innerHTML = '';
+          all.forEach(v => {
+            const btn = document.createElement('button');
+            btn.className = 'num-choice';
+            btn.type = 'button';
+            btn.style.background = numbers[v].color;
+            btn.textContent = numbers[v].display;
+            btn.addEventListener('click', e => {
+              if (v === numCountTarget) {
+                btn.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
+                score++; el.scoreText.textContent = `⭐ ${score}`;
+                speak(numCountTarget === 0 ? `对了！0 个，表示没有！` : `对了！${numCountTarget} 个！`);
+                recordMastery('number', String(numCountTarget), true);
+                document.querySelectorAll('#countChoices .num-choice').forEach(b => b.disabled = true);
+                numCountIdx++;
+                setTimeout(() => {
+                  if (numCountIdx >= 5) {
+                    numCountLevel++;
+                    if (numCountLevel >= numCountLevels.length) {
+                      showNumCelebrate('太棒啦！', '你成了数数小能手！', startNumCount);
+                      return;
+                    }
+                    numCountIdx = 0;
+                  }
+                  renderNumCount();
+                }, 1200);
+              } else {
+                btn.classList.add('is-wrong'); playWrong();
+                speak('再数一次试试看');
+                setTimeout(() => btn.classList.remove('is-wrong'), 500);
+              }
+            });
+            choicesEl.appendChild(btn);
+          });
+          speak('数好了吗？选一个数字吧');
+        }
+        setTimeout(() => speak('数一数，有几个？伸出小手指，一个一个点'), 200);
+      }
+
+      /* ===== 数字找朋友（F-7.4） ===== */
+      let numMatchIdx = 0, numMatchTarget = 0;
+      const numMatchLevels = [
+        { name: '简单', max: 5, choices: 3, diff: 2 },
+        { name: '中等', max: 8, choices: 3, diff: 1 },
+        { name: '困难', max: 10, choices: 4, diff: 1 }
+      ];
+      let numMatchLevel = 0;
+      function startNumMatch() {
+        numMatchLevel = 0; numMatchIdx = 0; score = 0;
+        el.livesText.hidden = true; el.timerText.hidden = true; el.progressRow.hidden = true; el.comboText.hidden = true;
+        el.scoreText.textContent = '⭐ 0';
+        renderNumMatch();
+      }
+      function renderNumMatch() {
+        if (numMatchIdx >= 5) {
+          numMatchLevel++;
+          if (numMatchLevel >= numMatchLevels.length) {
+            showNumCelebrate('太棒啦！', '你交到了好多数字好朋友！', startNumMatch);
+            return;
+          }
+          numMatchIdx = 0;
+        }
+        const lv = numMatchLevels[numMatchLevel];
+        numMatchTarget = Math.floor(Math.random() * (lv.max + 1));
+        const c = numContent();
+        c.innerHTML = `
+          <div class="num-hint">第 ${numMatchLevel + 1} 关 · ${lv.name} · 第 ${numMatchIdx + 1} / 5 题</div>
+          <div class="match-top" style="color:${numbers[numMatchTarget].color}">${numbers[numMatchTarget].display}</div>
+          <div class="num-hint">${numMatchTarget === 0 ? '0 的朋友在哪里？找一找，哪组什么都没有？' : `${numMatchTarget} 的朋友在哪里？找一找，哪组有 ${numMatchTarget} 个？`}</div>
+          <div class="match-groups" id="matchGroups"></div>
+        `;
+        const groupsEl = document.getElementById('matchGroups');
+        const pool = [];
+        for (let i = 0; i <= lv.max; i++) {
+          if (Math.abs(i - numMatchTarget) >= lv.diff || i === numMatchTarget) pool.push(i);
+        }
+        const wrongs = shuffled(pool.filter(v => v !== numMatchTarget)).slice(0, lv.choices - 1);
+        const all = shuffled([numMatchTarget, ...wrongs]);
+        all.forEach(v => {
+          const grp = document.createElement('button');
+          grp.className = 'match-group';
+          grp.type = 'button';
+          const objColor = pick(colors);
+          if (v === 0) {
+            grp.innerHTML = '<span style="color:#999;font-size:14px">空</span>';
+          } else {
+            let dots = '';
+            for (let i = 0; i < v; i++) dots += `<span class="match-obj" style="background:${objColor.hex}"></span>`;
+            grp.innerHTML = dots;
+          }
+          grp.addEventListener('click', e => {
+            if (v === numMatchTarget) {
+              grp.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
+              score++; el.scoreText.textContent = `⭐ ${score}`;
+              speak(numMatchTarget === 0 ? `0 和空的是好朋友！` : `${numMatchTarget} 和 ${numMatchTarget} 个是好朋友！`);
+              recordMastery('number', String(numMatchTarget), true);
+              document.querySelectorAll('#matchGroups .match-group').forEach(b => b.disabled = true);
+              numMatchIdx++;
+              setTimeout(renderNumMatch, 1200);
+            } else {
+              grp.classList.add('is-wrong'); playWrong();
+              speak('数数看，这是几个？');
+              setTimeout(() => grp.classList.remove('is-wrong'), 500);
+            }
+          });
+          groupsEl.appendChild(grp);
+        });
+        setTimeout(() => speak(numMatchTarget === 0 ? `0 的朋友在哪里？哪组什么都没有？` : `${numMatchTarget} 的朋友在哪里？哪组有 ${numMatchTarget} 个？`), 200);
+      }
+
+      /* ===== 数字排排队（F-7.5） ===== */
+      let numOrderLevel = 0;
+      const numOrderLevels = [
+        { name: '排队 0-3', range: [0,1,2,3] },
+        { name: '排队 0-5', range: [0,1,2,3,4,5] },
+        { name: '随机排序', range: null }
+      ];
+      function startNumOrder() {
+        numOrderLevel = 0; score = 0;
+        el.livesText.hidden = true; el.timerText.hidden = true; el.progressRow.hidden = true; el.comboText.hidden = true;
+        el.scoreText.textContent = '⭐ 0';
+        renderNumOrder();
+      }
+      function renderNumOrder() {
+        if (numOrderLevel >= numOrderLevels.length) {
+          showNumCelebrate('太棒啦！', '火车出发啦！你排好了所有数字！', startNumOrder);
+          return;
+        }
+        const lv = numOrderLevels[numOrderLevel];
+        let seq;
+        if (lv.range) {
+          seq = [...lv.range];
+        } else {
+          const pool = [0,1,2,3,4,5,6,7,8,9,10];
+          seq = shuffled(pool).slice(0, 4).sort((a,b) => a - b);
+        }
+        const c = numContent();
+        c.innerHTML = `
+          <div class="num-hint">第 ${numOrderLevel + 1} 关 · ${lv.name}</div>
+          <div class="num-hint">帮数字宝宝排队！从小到大排好！</div>
+          <div class="order-train" id="orderTrain"></div>
+          <div class="order-cards" id="orderCards"></div>
+        `;
+        const trainEl = document.getElementById('orderTrain');
+        const cardsEl = document.getElementById('orderCards');
+        const shuffledSeq = shuffled(seq);
+        const placed = new Array(seq.length).fill(null);
+        seq.forEach((v, i) => {
+          const car = document.createElement('div');
+          car.className = 'order-car';
+          car.dataset.idx = i;
+          car.textContent = i + 1;
+          trainEl.appendChild(car);
+        });
+        shuffledSeq.forEach((v, i) => {
+          const card = document.createElement('button');
+          card.className = 'order-card';
+          card.type = 'button';
+          card.textContent = numbers[v].display;
+          card.style.background = numbers[v].color;
+          card.dataset.value = v;
+          let startX, startY, origX, origY, dragging = false;
+          card.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            card.setPointerCapture(e.pointerId);
+            dragging = true;
+            card.classList.add('dragging');
+            const rect = card.getBoundingClientRect();
+            startX = e.clientX; startY = e.clientY;
+            origX = rect.left; origY = rect.top;
+          });
+          card.addEventListener('pointermove', e => {
+            if (!dragging) return;
+            const dx = e.clientX - startX, dy = e.clientY - startY;
+            card.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
+          });
+          card.addEventListener('pointerup', e => {
+            if (!dragging) return;
+            dragging = false;
+            card.classList.remove('dragging');
+            card.style.transform = '';
+            const carEls = document.querySelectorAll('#orderTrain .order-car');
+            let dropped = false;
+            carEls.forEach(car => {
+              const r = car.getBoundingClientRect();
+              if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+                const idx = parseInt(car.dataset.idx);
+                if (seq[idx] === v && !placed[idx]) {
+                  car.classList.add('filled');
+                  car.textContent = numbers[v].display;
+                  car.style.background = numbers[v].color;
+                  card.classList.add('placed');
+                  placed[idx] = v;
+                  playCorrect(); tone(660, .1);
+                  dropped = true;
+                  if (placed.every(p => p !== null)) {
+                    score++; el.scoreText.textContent = `⭐ ${score}`;
+                    speak('火车出发啦！排好队了！');
+                    setTimeout(() => { numOrderLevel++; renderNumOrder(); }, 1500);
+                  }
+                } else if (!placed[idx]) {
+                  playWrong();
+                  speak('这个数字应该在哪里呢？');
+                  dropped = true;
+                }
+              }
+            });
+            if (!dropped) {
+              playWrong();
+            }
+          });
+          cardsEl.appendChild(card);
+        });
+        setTimeout(() => speak('帮数字宝宝排队！从小到大排好！'), 200);
+      }
+
+      /* ===== 数物配对卡（F-7.6） ===== */
+      let numMemLevel = 0, numMemFlipped = [], numMemMatched = 0, numMemLock = false;
+      const numMemLevels = [
+        { name: '简单', pairs: 3, range: [0,1,2,3] },
+        { name: '中等', pairs: 4, range: [0,1,2,3,4,5] },
+        { name: '困难', pairs: 5, range: numbers.map(n => n.value) }
+      ];
+      function startNumMemory() {
+        numMemLevel = 0; score = 0;
+        el.livesText.hidden = true; el.timerText.hidden = true; el.progressRow.hidden = true; el.comboText.hidden = true;
+        el.scoreText.textContent = '⭐ 0';
+        renderNumMemory();
+      }
+      function renderNumMemory() {
+        if (numMemLevel >= numMemLevels.length) {
+          showNumCelebrate('太棒啦！', '全部找到了！你真厉害！', startNumMemory);
+          return;
+        }
+        const lv = numMemLevels[numMemLevel];
+        const chosenNums = shuffled(lv.range).slice(0, lv.pairs);
+        const cards = [];
+        chosenNums.forEach(v => {
+          cards.push({ type: 'num', value: v, key: v });
+          cards.push({ type: 'dots', value: v, key: v });
+        });
+        const shuffledCards = shuffled(cards);
+        numMemFlipped = []; numMemMatched = 0; numMemLock = false;
+        const c = numContent();
+        c.innerHTML = `
+          <div class="num-hint">第 ${numMemLevel + 1} 关 · ${lv.name}</div>
+          <div class="num-hint">翻一翻，找到数字和数量一样的卡片！</div>
+          <div class="mem-grid" id="memGrid"></div>
+        `;
+        const grid = document.getElementById('memGrid');
+        shuffledCards.forEach((card, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'mem-card';
+          btn.type = 'button';
+          btn.dataset.idx = i;
+          btn.dataset.key = card.key;
+          const inner = document.createElement('div');
+          inner.className = 'mem-card-inner';
+          const back = document.createElement('div');
+          back.className = 'mem-face mem-back';
+          back.textContent = '❓';
+          const front = document.createElement('div');
+          front.className = 'mem-face mem-front';
+          if (card.type === 'num') {
+            front.innerHTML = `<span class="mem-num" style="color:${numbers[card.value].color}">${numbers[card.value].display}</span>`;
+          } else {
+            front.innerHTML = `<div class="mem-dots">${makeDots(card.value, numbers[card.value].color)}</div>`;
+          }
+          inner.appendChild(back);
+          inner.appendChild(front);
+          btn.appendChild(inner);
+          btn.addEventListener('click', () => onMemCardClick(btn, card, i));
+          grid.appendChild(btn);
+        });
+        setTimeout(() => speak('翻一翻，找到数字和数量一样的卡片！'), 200);
+      }
+      function onMemCardClick(btn, card, idx) {
+        if (numMemLock || btn.classList.contains('flipped') || btn.classList.contains('matched')) return;
+        btn.classList.add('flipped');
+        playTick();
+        if (card.type === 'num') speak(numbers[card.value].name);
+        else speak(String(card.value));
+        numMemFlipped.push({ btn, card, idx });
+        if (numMemFlipped.length === 2) {
+          numMemLock = true;
+          const [a, b] = numMemFlipped;
+          if (a.card.key === b.card.key && a.card.type !== b.card.type) {
+            setTimeout(() => {
+              a.btn.classList.add('matched');
+              b.btn.classList.add('matched');
+              playCorrect();
+              speak(`${a.card.value === 0 ? '0 和空盘子' : `${a.card.value} 和 ${a.card.value} 个`}，配对成功！`);
+              numMemMatched++;
+              score++; el.scoreText.textContent = `⭐ ${score}`;
+              numMemFlipped = []; numMemLock = false;
+              const lv = numMemLevels[numMemLevel];
+              if (numMemMatched >= lv.pairs) {
+                setTimeout(() => { numMemLevel++; renderNumMemory(); }, 1200);
+              }
+            }, 500);
+          } else {
+            setTimeout(() => {
+              a.btn.classList.remove('flipped');
+              b.btn.classList.remove('flipped');
+              playWrong();
+              speak('记住它们的位置哦');
+              numMemFlipped = []; numMemLock = false;
+            }, 900);
+          }
+        }
+      }
+
       function goHome() {
         stopTimer(); stopSpeech(); stopBalloon(); stopPuzzle(); stopMagic(); stopPiano();
         el.finish.classList.remove('show'); el.levelComplete.classList.remove('show');
@@ -2480,6 +3138,8 @@
         document.getElementById('magicArea').hidden = true;
         document.getElementById('pianoArea').hidden = true;
         document.getElementById('pinchArea').hidden = true;
+        document.getElementById('numArea').hidden = true;
+        document.getElementById('numCelebrate').hidden = true;
         el.play.hidden = true; el.home.hidden = false;
       }
       function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
