@@ -228,6 +228,7 @@
       .shape-art.shape-heart::before { top: -50%; left: 0; }
       .shape-art.shape-heart::after { top: 0; left: -50%; }
       .shape-art.shape-diamond { background: var(--s-color); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); filter: drop-shadow(0 5px 0 rgba(0,0,0,.10)); }
+      .shape-art.shape-trapezoid { background: var(--s-color); clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%); filter: drop-shadow(0 5px 0 rgba(0,0,0,.10)); }
 
       /* ---------- 首页分区布局（F-1.4） ---------- */
       .home-section { margin-bottom: 20px; }
@@ -254,7 +255,7 @@
       .explore-card .explore-label { font-size: 16px; font-weight: 900; color: var(--ink); }
       .explore-card.exp-color .explore-swatch { width: 52px; height: 52px; border-radius: 50%; box-shadow: inset -6px -6px 0 rgba(0,0,0,.10), inset 5px 5px 0 rgba(255,255,255,.18); }
       .explore-card.exp-shape .shape-art { width: 48px; height: 48px; }
-      .explore-card.exp-shape .shape-art.shape-triangle { border-right: 30px solid transparent; border-bottom: 52px solid var(--s-color); border-left: 30px solid transparent; }
+      .explore-card.exp-shape .shape-art.shape-triangle { width: 0; height: 0; border-right: 30px solid transparent; border-bottom: 52px solid var(--s-color); border-left: 30px solid transparent; }
       .explore-card.exp-shape .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 6px; }
       .explore-card.pop { animation: pop .42s ease; }
       .explore-tabs { display: flex; gap: 8px; margin-top: 14px; }
@@ -389,7 +390,7 @@
         .explore-card { min-height: 160px; }
         .explore-card .explore-swatch { width: 64px; height: 64px; }
         .explore-card .shape-art { width: 60px; height: 60px; }
-        .explore-card .shape-art.shape-triangle { border-right: 38px solid transparent; border-bottom: 64px solid var(--s-color); border-left: 38px solid transparent; }
+        .explore-card .shape-art.shape-triangle { width: 0; height: 0; border-right: 38px solid transparent; border-bottom: 64px solid var(--s-color); border-left: 38px solid transparent; }
         .game-card { padding: 40px; border-radius: 40px; }
         .object { width: 160px; height: 160px; }
         .color-name { font-size: 80px; }
@@ -476,10 +477,10 @@
       .puzzle-piece:active { cursor: grabbing; transform: scale(1.08); }
       .puzzle-piece.snapped { transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
       .puzzle-piece .shape-art { width: 50px; height: 50px; }
-      .puzzle-piece .shape-art.shape-triangle { border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
+      .puzzle-piece .shape-art.shape-triangle { width: 0; height: 0; border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
       .puzzle-piece .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 4px; }
       .puzzle-slot .shape-art { width: 50px; height: 50px; opacity: .25; }
-      .puzzle-slot .shape-art.shape-triangle { border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
+      .puzzle-slot .shape-art.shape-triangle { width: 0; height: 0; border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
       .puzzle-slot .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 4px; }
       .puzzle-menu { display: flex; gap: 16px; justify-content: center; margin: 24px auto; flex-wrap: wrap; }
       .puzzle-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 130px; padding: 20px 12px; font-size: 40px; border: 0; border-radius: 20px; background: #fff; box-shadow: 0 5px 0 rgba(68,54,102,.12), 0 8px 20px rgba(68,54,102,.08); cursor: pointer; }
@@ -493,8 +494,8 @@
       .puzzle-pattern-name { text-align: center; font-size: 20px; font-weight: 900; color: var(--purple); margin: 4px 0 8px; }
       .puzzle-board { position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 1; border-radius: 20px; background: rgba(115,102,220,.06); border: 2px solid rgba(115,102,220,.12); }
       .puzzle-target { position: absolute; display: grid; place-items: center; border: 2px dashed rgba(115,102,220,.3); border-radius: 14px; transition: all .2s ease; }
-      .puzzle-target .shape-art { width: 60%; height: 60%; opacity: .2; }
-      .puzzle-target .shape-art.shape-triangle { border-right: 22px solid transparent; border-bottom: 38px solid var(--s-color); border-left: 22px solid transparent; }
+      .puzzle-target .shape-art { width: 60%; aspect-ratio: 1 / 1; height: auto; max-height: 60%; opacity: .2; }
+      .puzzle-target .shape-art.shape-triangle { width: 0; height: 0; border-right: 22px solid transparent; border-bottom: 38px solid var(--s-color); border-left: 22px solid transparent; }
       .puzzle-target .shape-art.shape-heart { width: 50%; height: 44%; margin-top: 6px; }
       .puzzle-target.filled { border-color: transparent; background: transparent; }
       .puzzle-target.filled .shape-art { opacity: 1; }
@@ -505,11 +506,11 @@
       .puzzle-tray-piece.dragging { opacity: .5; z-index: 100; }
       .puzzle-tray-piece.placed { visibility: hidden; pointer-events: none; }
       .puzzle-tray-piece .shape-art { width: 38px; height: 38px; }
-      .puzzle-tray-piece .shape-art.shape-triangle { border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
+      .puzzle-tray-piece .shape-art.shape-triangle { width: 0; height: 0; border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
       .puzzle-tray-piece .shape-art.shape-heart { width: 30px; height: 26px; margin-top: 3px; }
       .puzzle-ghost { position: fixed; pointer-events: none; z-index: 9999; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,.9); box-shadow: 0 8px 24px rgba(68,54,102,.2); transform: scale(1.1); }
       .puzzle-ghost .shape-art { width: 38px; height: 38px; }
-      .puzzle-ghost .shape-art.shape-triangle { border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
+      .puzzle-ghost .shape-art.shape-triangle { width: 0; height: 0; border-right: 20px solid transparent; border-bottom: 34px solid var(--s-color); border-left: 20px solid transparent; }
       .puzzle-ghost .shape-art.shape-heart { width: 30px; height: 26px; margin-top: 3px; }
 
       /* ---------- 触摸游戏：长按变色魔术（F-6.15） ---------- */
@@ -990,7 +991,8 @@
         { name: '三角形', display: '三角形', cls: 'shape-triangle', color: '#6dbf6e' },
         { name: '星形', display: '星 形', cls: 'shape-star', color: '#f4cd4e' },
         { name: '心形', display: '心 形', cls: 'shape-heart', color: '#ef6b67' },
-        { name: '菱形', display: '菱 形', cls: 'shape-diamond', color: '#a27bd0' }
+        { name: '菱形', display: '菱 形', cls: 'shape-diamond', color: '#a27bd0' },
+        { name: '梯形', display: '梯 形', cls: 'shape-trapezoid', color: '#ee89b8' }
       ];
       const shapeByName = new Map(shapes.map(s => [s.name, s]));
 
@@ -1016,13 +1018,14 @@
         '三角形': ['屋顶', '三明治', '旗帜', '衣架', '切片蛋糕'],
         '星形': ['星星', '魔法棒', '海星', '星星糖', '星星灯'],
         '心形': ['爱心', '气球', '贺卡', '草莓', '棒棒糖'],
-        '菱形': ['风筝', '宝石', '拼图块', '领结', '窗花']
+        '菱形': ['风筝', '宝石', '拼图块', '领结', '窗花'],
+        '梯形': ['花盆', '水桶', '灯罩', '纸杯', '凳子']
       };
 
       /* ---------- 形状闯关体系（F-1.3） ---------- */
       const shapeLevels = [
-        { name: '形状启蒙', rounds: 3, choices: 2, palette: ['圆形', '方形', '三角形'], message: '你已经认识基础形状啦！' },
-        { name: '形状探险', rounds: 4, choices: 3, palette: ['圆形', '方形', '三角形', '星形'], message: '好多形状都难不倒你！' },
+        { name: '形状启蒙', rounds: 3, choices: 2, palette: ['圆形', '方形', '三角形', '梯形'], message: '你已经认识基础形状啦！' },
+        { name: '形状探险', rounds: 4, choices: 3, palette: ['圆形', '方形', '三角形', '星形', '梯形'], message: '好多形状都难不倒你！' },
         { name: '形状大师', rounds: 5, choices: 4, palette: shapes.map(s => s.name), message: '你是小小形状大师！' }
       ];
       const shapeTotalRounds = shapeLevels.reduce((s, l) => s + l.rounds, 0);
@@ -1835,7 +1838,8 @@
             { name: '圆形', cls: 'shape-circle', color: '#5a9fe0' },
             { name: '方形', cls: 'shape-square', color: '#f59a45' },
             { name: '三角形', cls: 'shape-triangle', color: '#6dbf6e' },
-            { name: '星形', cls: 'shape-star', color: '#f4cd4e' }
+            { name: '星形', cls: 'shape-star', color: '#f4cd4e' },
+            { name: '梯形', cls: 'shape-trapezoid', color: '#ee89b8' }
           ];
           document.getElementById('enlightenBadge').textContent = '形状启蒙';
         }
@@ -2760,6 +2764,7 @@
           { type: 'shape', cls: 'shape-star', color: '#f4cd4e', name: '星形' },
           { type: 'shape', cls: 'shape-heart', color: '#ef6b67', name: '心形' },
           { type: 'shape', cls: 'shape-diamond', color: '#a27bd0', name: '菱形' },
+          { type: 'shape', cls: 'shape-trapezoid', color: '#ee89b8', name: '梯形' },
           { type: 'art', cls: 'art-apple', color: '#ef6b67', name: '苹果' },
           { type: 'art', cls: 'art-fish', color: '#5a9fe0', name: '小鱼' },
           { type: 'art', cls: 'art-butterfly', color: '#a27bd0', name: '蝴蝶' },
