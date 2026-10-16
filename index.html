@@ -496,6 +496,7 @@
       .puzzle-target { position: absolute; display: grid; place-items: center; border: 2px dashed rgba(115,102,220,.3); border-radius: 14px; transition: all .2s ease; }
       .puzzle-target .shape-art { width: 60%; aspect-ratio: 1 / 1; height: auto; max-height: 60%; opacity: .2; }
       .puzzle-target .shape-art.shape-triangle { width: 0; height: 0; border-right: 22px solid transparent; border-bottom: 38px solid var(--s-color); border-left: 22px solid transparent; }
+      .puzzle-target .shape-art.shape-trapezoid { aspect-ratio: auto; height: 60%; max-height: none; }
       .puzzle-target .shape-art.shape-heart { width: 50%; height: 44%; margin-top: 6px; }
       .puzzle-target.filled { border-color: transparent; background: transparent; }
       .puzzle-target.filled .shape-art { opacity: 1; }
@@ -2166,62 +2167,61 @@
         {
           name: '小房子',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#f59a45', x: 30, y: 50, w: 40, h: 35 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 25, y: 18, w: 50, h: 35 },
-            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 33, y: 58, w: 14, h: 18 },
-            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 52, y: 55, w: 12, h: 12 }
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 28, y: 10, w: 44, h: 26 },
+            { shape: '方形', cls: 'shape-square', color: '#f59a45', x: 32, y: 38, w: 36, h: 36 },
+            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 38, y: 58, w: 12, h: 12 },
+            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 56, y: 50, w: 12, h: 12 }
           ]
         },
         {
           name: '小汽车',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 15, y: 40, w: 70, h: 28 },
-            { shape: '方形', cls: 'shape-square', color: '#a27bd0', x: 30, y: 22, w: 40, h: 22 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 20, y: 65, w: 16, h: 16 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 64, y: 65, w: 16, h: 16 }
+            { shape: '方形', cls: 'shape-square', color: '#a27bd0', x: 34, y: 26, w: 24, h: 24 },
+            { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 22, y: 48, w: 36, h: 36 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 24, y: 76, w: 14, h: 14 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 56, y: 76, w: 14, h: 14 }
           ]
         },
         {
           name: '雪人',
           pieces: [
-            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 55, w: 40, h: 38 },
-            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 35, y: 22, w: 30, h: 28 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 42, y: 30, w: 16, h: 12 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 40, y: 28, w: 6, h: 6 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 54, y: 28, w: 6, h: 6 }
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 55, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 35, y: 20, w: 30, h: 30 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 44, y: 32, w: 12, h: 12 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 42, y: 26, w: 8, h: 8 }
           ]
         },
         {
           name: '火箭',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#e8e8e8', x: 38, y: 25, w: 24, h: 45 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 20 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 22, y: 55, w: 16, h: 18 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 62, y: 55, w: 16, h: 18 }
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 24 },
+            { shape: '方形', cls: 'shape-square', color: '#e8e8e8', x: 36, y: 32, w: 28, h: 28 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 22, y: 52, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 62, y: 52, w: 16, h: 16 }
           ]
         },
         {
           name: '蝴蝶',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#3c3653', x: 46, y: 35, w: 8, h: 30 },
-            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 18, y: 18, w: 30, h: 28 },
-            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 52, y: 18, w: 30, h: 28 },
-            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 22, y: 48, w: 24, h: 22 },
-            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 54, y: 48, w: 24, h: 22 }
+            { shape: '方形', cls: 'shape-square', color: '#3c3653', x: 45, y: 40, w: 10, h: 10 },
+            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 18, y: 14, w: 28, h: 28 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 54, y: 14, w: 28, h: 28 },
+            { shape: '圆形', cls: 'shape-circle', color: '#a27bd0', x: 22, y: 48, w: 24, h: 24 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 54, y: 48, w: 24, h: 24 }
           ]
         },
         {
           name: '冰淇淋',
           pieces: [
-            { shape: '三角形', cls: 'shape-triangle', color: '#b07a52', x: 35, y: 45, w: 30, h: 45 },
-            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 30, y: 20, w: 40, h: 35 },
-            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 20 }
+            { shape: '三角形', cls: 'shape-triangle', color: '#b07a52', x: 35, y: 55, w: 30, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 32, y: 30, w: 36, h: 36 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 14, w: 24, h: 24 }
           ]
         },
         {
           name: '小鱼',
           pieces: [
-            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 16, y: 40, w: 18, h: 22 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 16, y: 40, w: 20, h: 20 },
             { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 34, y: 36, w: 30, h: 30 },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 52, y: 44, w: 8, h: 8 }
           ]
@@ -2230,24 +2230,24 @@
           name: '小船',
           pieces: [
             { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 70, y: 10, w: 14, h: 14 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 40, y: 12, w: 22, h: 30 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 39, y: 12, w: 22, h: 22 },
             { shape: '梯形', cls: 'shape-trapezoid', color: '#b07a52', x: 26, y: 46, w: 48, h: 24 }
           ]
         },
         {
           name: '大树',
           pieces: [
-            { shape: '三角形', cls: 'shape-triangle', color: '#6dbf6e', x: 30, y: 10, w: 40, h: 42 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#6dbf6e', x: 30, y: 10, w: 40, h: 40 },
             { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 35, y: 30, w: 10, h: 10 },
             { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 55, y: 30, w: 10, h: 10 },
-            { shape: '方形', cls: 'shape-square', color: '#b07a52', x: 43, y: 52, w: 14, h: 28 }
+            { shape: '方形', cls: 'shape-square', color: '#b07a52', x: 42, y: 56, w: 16, h: 16 }
           ]
         },
         {
           name: '小猫',
           pieces: [
-            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 30, y: 10, w: 16, h: 18 },
-            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 54, y: 10, w: 16, h: 18 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 30, y: 10, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 54, y: 10, w: 16, h: 16 },
             { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 22, w: 40, h: 40 },
             { shape: '梯形', cls: 'shape-trapezoid', color: '#f59a45', x: 34, y: 60, w: 32, h: 26 }
           ]
@@ -2255,7 +2255,7 @@
         {
           name: '花朵',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#6dbf6e', x: 46, y: 58, w: 8, h: 28 },
+            { shape: '方形', cls: 'shape-square', color: '#6dbf6e', x: 46, y: 62, w: 8, h: 8 },
             { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 42, y: 14, w: 16, h: 16 },
             { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 42, y: 50, w: 16, h: 16 },
             { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 24, y: 32, w: 16, h: 16 },
