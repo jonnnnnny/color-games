@@ -481,6 +481,9 @@
       .puzzle-slot .shape-art { width: 50px; height: 50px; opacity: .25; }
       .puzzle-slot .shape-art.shape-triangle { border-right: 28px solid transparent; border-bottom: 48px solid var(--s-color); border-left: 28px solid transparent; }
       .puzzle-slot .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 4px; }
+      .puzzle-menu { display: flex; gap: 16px; justify-content: center; margin: 24px auto; flex-wrap: wrap; }
+      .puzzle-menu-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 130px; padding: 20px 12px; font-size: 40px; border: 0; border-radius: 20px; background: #fff; box-shadow: 0 5px 0 rgba(68,54,102,.12), 0 8px 20px rgba(68,54,102,.08); cursor: pointer; }
+      .puzzle-menu-btn span { font-size: 18px; font-weight: 900; color: var(--ink); }
       .puzzle-hint { text-align: center; padding: 16px; color: var(--ink); font-size: 18px; font-weight: 800; }
       .puzzle-progress { display: flex; justify-content: center; gap: 8px; padding: 8px 0 4px; }
       .puzzle-dot { width: 12px; height: 12px; border-radius: 50%; background: #ddd6c8; transition: background .2s ease, transform .2s ease; }
@@ -881,6 +884,10 @@
           <div id="puzzleArea" hidden>
             <div class="puzzle-hint" id="puzzleHint">把形状拖到对应的轮廓里，拼出图案吧！</div>
             <div class="puzzle-progress" id="puzzleProgress"></div>
+            <div class="puzzle-menu" id="puzzleMenu">
+              <button class="puzzle-menu-btn" id="puzzleMenuSimple" type="button">🧩<span>形状配对</span></button>
+              <button class="puzzle-menu-btn" id="puzzleMenuPattern" type="button">🏠<span>图形拼接</span></button>
+            </div>
             <div class="puzzle-pattern-name" id="puzzlePatternName"></div>
             <div class="puzzle-board" id="puzzleBoard"></div>
             <div class="puzzle-tray" id="puzzleTray"></div>
@@ -2147,6 +2154,7 @@
       let puzzleDone = 0;
       let puzzleTotal = 0;
       let puzzleSlots = [];
+      let puzzlePieces = [];
       let puzzlePatternIdx = 0;
 
       // 图案库：每个图案由多个形状碎片组成，拼完组成一个完整图案
@@ -2210,7 +2218,209 @@
 
       function startPuzzle() {
         puzzleActive = true;
+        // 子模式选择：形状配对（原版）/ 图形拼接（新版）
+        document.getElementById('puzzleMenu').style.display = 'flex';
+        document.getElementById('puzzleBoard').style.display = 'none';
+        document.getElementById('puzzleTray').style.display = 'none';
+        document.getElementById('puzzleStage').style.display = 'none';
+        document.getElementById('puzzlePatternName').textContent = '';
+        document.getElementById('puzzleProgress').innerHTML = '';
+        document.getElementById('puzzleHint').textContent = '选一个来玩吧！';
+        speak('拼拼乐，选一个来玩吧');
+      }
+      document.getElementById('puzzleMenuSimple').addEventListener('click', startPuzzleSimple);
+      document.getElementById('puzzleMenuPattern').addEventListener('click', startPuzzlePattern);
+      function showPuzzleContainers(mode) {
+        document.getElementById('puzzleMenu').style.display = 'none';
+        const isPattern = mode === 'pattern';
+        document.getElementById('puzzleBoard').style.display = isPattern ? '' : 'none';
+        document.getElementById('puzzleTray').style.display = isPattern ? '' : 'none';
+        document.getElementById('puzzleStage').style.display = isPattern ? 'none' : '';
+      }
+      /* ===== 形状配对（原版简单拖拽） ===== */
+      function startPuzzleSimple() {
+        puzzleActive = true;
         puzzleDone = 0;
+        showPuzzleContainers('simple');
+        const stage = document.getElementById('puzzleStage');
+        stage.innerHTML = '';
+
+        // 随机选 3~4 种形状
+        const count = 3 + Math.floor(Math.random() * 2);
+        const chosen = shuffled(shapes).slice(0, count);
+        puzzleTotal = chosen.length;
+
+        // 渲染进度点
+        const progress = document.getElementById('puzzleProgress');
+        progress.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'puzzle-dot';
+          progress.appendChild(dot);
+        }
+
+        // 等待 stage 布局完成后设置尺寸
+        requestAnimationFrame(() => {
+          if (!puzzleActive) return;
+          const rect = stage.getBoundingClientRect();
+          const w = rect.width;
+          const h = rect.height;
+          const slotSize = 80;
+          const pieceSize = 80;
+
+          // 在上半区域放置轮廓（slots），下半区域放置碎片（pieces）
+          puzzleSlots = [];
+          puzzlePieces = [];
+
+          // 轮廓位置：均匀分布在上半区
+          const slotY = h * 0.2;
+          const slotSpacing = w / (count + 1);
+          chosen.forEach((shape, i) => {
+            const slot = document.createElement('div');
+            slot.className = 'puzzle-slot';
+            slot.style.width = `${slotSize}px`;
+            slot.style.height = `${slotSize}px`;
+            slot.style.left = `${slotSpacing * (i + 1) - slotSize / 2}px`;
+            slot.style.top = `${slotY}px`;
+            slot.dataset.shape = shape.name;
+
+            const slotArt = document.createElement('span');
+            slotArt.className = `shape-art ${shape.cls}`;
+            slotArt.style.setProperty('--s-color', shape.color);
+            slot.appendChild(slotArt);
+            stage.appendChild(slot);
+            puzzleSlots.push({ el: slot, shape, x: slotSpacing * (i + 1) - slotSize / 2, y: slotY });
+          });
+
+          // 碎片位置：打乱后放在下半区
+          const shuffledShapes = shuffled(chosen);
+          const pieceY = h * 0.6;
+          const pieceSpacing = w / (count + 1);
+          shuffledShapes.forEach((shape, i) => {
+            const piece = document.createElement('div');
+            piece.className = 'puzzle-piece';
+            piece.style.width = `${pieceSize}px`;
+            piece.style.height = `${pieceSize}px`;
+            const px = pieceSpacing * (i + 1) - pieceSize / 2;
+            piece.style.left = `${px}px`;
+            piece.style.top = `${pieceY}px`;
+            piece.dataset.shape = shape.name;
+
+            const art = document.createElement('span');
+            art.className = `shape-art ${shape.cls}`;
+            art.style.setProperty('--s-color', shape.color);
+            piece.appendChild(art);
+            stage.appendChild(piece);
+
+            const pieceData = { el: piece, shape, startX: px, startY: pieceY, currentX: px, currentY: pieceY };
+            puzzlePieces.push(pieceData);
+            bindPuzzleDragSimple(piece, pieceData);
+          });
+        });
+
+        speak('把形状拖到一样的轮廓里吧');
+        document.getElementById('puzzleHint').textContent = '把形状拖到一样的轮廓里吧！';
+      }
+
+      function bindPuzzleDragSimple(piece, data) {
+        let dragging = false;
+        let startPX = 0, startPY = 0;
+        let origLeft = 0, origTop = 0;
+
+        piece.addEventListener('pointerdown', e => {
+          if (!puzzleActive || piece.classList.contains('snapped')) return;
+          e.preventDefault();
+          dragging = true;
+          piece.setPointerCapture(e.pointerId);
+          piece.style.zIndex = '10';
+          piece.style.transition = 'none';
+          startPX = e.clientX;
+          startPY = e.clientY;
+          origLeft = data.currentX;
+          origTop = data.currentY;
+        });
+
+        piece.addEventListener('pointermove', e => {
+          if (!dragging) return;
+          e.preventDefault();
+          const dx = e.clientX - startPX;
+          const dy = e.clientY - startPY;
+          data.currentX = origLeft + dx;
+          data.currentY = origTop + dy;
+          piece.style.left = `${data.currentX}px`;
+          piece.style.top = `${data.currentY}px`;
+        });
+
+        piece.addEventListener('pointerup', e => {
+          if (!dragging) return;
+          dragging = false;
+          piece.style.zIndex = '2';
+
+          // 检测是否拖到了匹配的 slot
+          const slot = puzzleSlots.find(s => s.shape.name === data.shape.name);
+          if (slot && !slot.el.classList.contains('filled')) {
+            const pieceRect = piece.getBoundingClientRect();
+            const slotRect = slot.el.getBoundingClientRect();
+            const distX = Math.abs(pieceRect.left + pieceRect.width / 2 - slotRect.left - slotRect.width / 2);
+            const distY = Math.abs(pieceRect.top + pieceRect.height / 2 - slotRect.top - slotRect.height / 2);
+
+            if (distX < 50 && distY < 50) {
+              // 吸附到 slot
+              piece.classList.add('snapped');
+              piece.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1), left .25s ease, top .25s ease';
+              piece.style.left = `${slot.x}px`;
+              piece.style.top = `${slot.y}px`;
+              data.currentX = slot.x;
+              data.currentY = slot.y;
+              slot.el.classList.add('filled');
+              playCorrect();
+              speak(data.shape.name);
+              recordMastery('shape', data.shape.name, true);
+              puzzleDone += 1;
+              document.getElementById('puzzleHint').innerHTML = `<strong>太棒啦！</strong>${data.shape.name}拼好了！`;
+
+              // 更新进度点
+              const dots = document.querySelectorAll('#puzzleProgress .puzzle-dot');
+              if (dots[puzzleDone - 1]) dots[puzzleDone - 1].classList.add('done');
+
+              if (puzzleDone >= puzzleTotal) {
+                setTimeout(() => {
+                  confettiBurst();
+                  speak('全部拼完啦！你真棒！');
+                  document.getElementById('puzzleHint').innerHTML = '🎉 全部拼完啦！';
+                  setTimeout(() => { if (puzzleActive) startPuzzleSimple(); }, 2500);
+                }, 400);
+              }
+              return;
+            }
+          }
+
+          // 没有匹配，弹回原位
+          piece.style.transition = 'left .3s ease, top .3s ease';
+          piece.style.left = `${data.startX}px`;
+          piece.style.top = `${data.startY}px`;
+          data.currentX = data.startX;
+          data.currentY = data.startY;
+          playWrong();
+        });
+
+        piece.addEventListener('pointercancel', () => {
+          if (!dragging) return;
+          dragging = false;
+          piece.style.zIndex = '2';
+          piece.style.transition = 'left .3s ease, top .3s ease';
+          piece.style.left = `${data.startX}px`;
+          piece.style.top = `${data.startY}px`;
+          data.currentX = data.startX;
+          data.currentY = data.startY;
+        });
+      }
+
+      /* ===== 图形拼接（新版图案拼图，同形状不限顺序） ===== */
+      function startPuzzlePattern() {
+        puzzleActive = true;
+        puzzleDone = 0;
+        showPuzzleContainers('pattern');
         puzzlePatternIdx = Math.floor(Math.random() * puzzlePatterns.length);
         renderPuzzlePattern();
       }
@@ -2330,7 +2540,7 @@
                 confettiBurst();
                 speak(`${puzzlePatterns[puzzlePatternIdx].name}拼完啦！你真棒！`);
                 document.getElementById('puzzleHint').innerHTML = `🎉 ${puzzlePatterns[puzzlePatternIdx].name}拼完啦！`;
-                setTimeout(() => { if (puzzleActive) startPuzzle(); }, 2800);
+                setTimeout(() => { if (puzzleActive) startPuzzlePattern(); }, 2800);
               }, 400);
             }
           } else {
@@ -2350,7 +2560,7 @@
       function findPuzzleTarget(clientX, clientY, piece) {
         for (const slot of puzzleSlots) {
           if (slot.el.classList.contains('filled')) continue;
-          if (slot.idx !== piece.origIdx) continue;
+          if (slot.piece.shape !== piece.shape) continue;
           const r = slot.el.getBoundingClientRect();
           if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) return slot;
         }
