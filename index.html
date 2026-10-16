@@ -2217,6 +2217,51 @@
             { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 30, y: 20, w: 40, h: 35 },
             { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 8, w: 24, h: 20 }
           ]
+        },
+        {
+          name: '小鱼',
+          pieces: [
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 16, y: 40, w: 18, h: 22 },
+            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 34, y: 36, w: 30, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 52, y: 44, w: 8, h: 8 }
+          ]
+        },
+        {
+          name: '小船',
+          pieces: [
+            { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 70, y: 10, w: 14, h: 14 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 40, y: 12, w: 22, h: 30 },
+            { shape: '梯形', cls: 'shape-trapezoid', color: '#b07a52', x: 26, y: 46, w: 48, h: 24 }
+          ]
+        },
+        {
+          name: '大树',
+          pieces: [
+            { shape: '三角形', cls: 'shape-triangle', color: '#6dbf6e', x: 30, y: 10, w: 40, h: 42 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 35, y: 30, w: 10, h: 10 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 55, y: 30, w: 10, h: 10 },
+            { shape: '方形', cls: 'shape-square', color: '#b07a52', x: 43, y: 52, w: 14, h: 28 }
+          ]
+        },
+        {
+          name: '小猫',
+          pieces: [
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 30, y: 10, w: 16, h: 18 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 54, y: 10, w: 16, h: 18 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 22, w: 40, h: 40 },
+            { shape: '梯形', cls: 'shape-trapezoid', color: '#f59a45', x: 34, y: 60, w: 32, h: 26 }
+          ]
+        },
+        {
+          name: '花朵',
+          pieces: [
+            { shape: '方形', cls: 'shape-square', color: '#6dbf6e', x: 46, y: 58, w: 8, h: 28 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 42, y: 14, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 42, y: 50, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 24, y: 32, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 60, y: 32, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 42, y: 32, w: 16, h: 16 }
+          ]
         }
       ];
 
@@ -2564,7 +2609,7 @@
       function findPuzzleTarget(clientX, clientY, piece) {
         for (const slot of puzzleSlots) {
           if (slot.el.classList.contains('filled')) continue;
-          if (slot.piece.shape !== piece.shape) continue;
+          if (slot.piece.shape !== piece.shape || slot.piece.color !== piece.color) continue;
           const r = slot.el.getBoundingClientRect();
           if (clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom) return slot;
         }
