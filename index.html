@@ -584,6 +584,7 @@
       .match-group.is-correct { border-color: #6dbf6e; background: #e8f5e9; animation: pop .4s; }
       .match-group.is-wrong { animation: shake .4s; }
       .match-group .match-obj { width: 20px; height: 20px; border-radius: 50%; }
+      .match-group .num-obj { font-size: 24px; line-height: 1.35; }
 
       /* 数字排排队 */
       .order-train { display: flex; gap: 8px; justify-content: center; margin: 20px auto; flex-wrap: wrap; }
@@ -3220,14 +3221,7 @@
           const grp = document.createElement('button');
           grp.className = 'match-group';
           grp.type = 'button';
-          const objColor = pick(colors);
-          if (v === 0) {
-            grp.innerHTML = '<span style="color:#999;font-size:14px">空</span>';
-          } else {
-            let dots = '';
-            for (let i = 0; i < v; i++) dots += `<span class="match-obj" style="background:${objColor.hex}"></span>`;
-            grp.innerHTML = dots;
-          }
+          grp.innerHTML = makeObjects(v);
           grp.addEventListener('click', e => {
             if (v === numMatchTarget) {
               grp.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
