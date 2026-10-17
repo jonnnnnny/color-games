@@ -823,8 +823,6 @@
         { name: '蓝色', display: '蓝 色', hex: '#5a9fe0', pale: false },
         { name: '紫色', display: '紫 色', hex: '#a27bd0', pale: false },
         { name: '粉色', display: '粉 色', hex: '#ee89b8', pale: false },
-        { name: '棕色', display: '棕 色', hex: '#b07a52', pale: false },
-        { name: '灰色', display: '灰 色', hex: '#9aa2ad', pale: true },
         { name: '白色', display: '白 色', hex: '#fbfaf6', pale: true }
       ];
       const colorByName = new Map(colors.map(c => [c.name, c]));
@@ -884,12 +882,6 @@
         { color: '粉色', art: 'art-house', noun: '小房子' },
         { color: '粉色', art: 'art-icecream', noun: '冰淇淋' },
         { color: '粉色', art: 'shape-flower', noun: '小花' },
-        { color: '棕色', art: 'art-book', noun: '书本' },
-        { color: '棕色', art: 'art-hat', noun: '帽子' },
-        { color: '棕色', art: 'art-cookie', noun: '饼干' },
-        { color: '灰色', art: 'art-cup', noun: '杯子' },
-        { color: '灰色', art: 'art-stone', noun: '石头' },
-        { color: '灰色', art: 'art-pencil', noun: '铅笔' },
         { color: '白色', art: 'art-cloud', noun: '云朵' },
         { color: '白色', art: 'art-snowman', noun: '雪人' },
         { color: '白色', art: 'art-egg', noun: '鸡蛋' }
@@ -898,7 +890,7 @@
       const levels = [
         { name: '颜色启蒙', rounds: 3, choices: 2, palette: ['红色', '黄色', '蓝色'], message: '你已经学会基础颜色啦！' },
         { name: '颜色探险', rounds: 4, choices: 3, palette: ['红色', '橙色', '黄色', '绿色', '蓝色', '粉色'], message: '好多颜色都难不倒你！' },
-        { name: '颜色大师', rounds: 5, choices: 4, palette: ['红色', '橙色', '黄色', '绿色', '青色', '蓝色', '紫色', '粉色', '棕色'], message: '你是小小颜色大师！' },
+        { name: '颜色大师', rounds: 5, choices: 4, palette: ['红色', '橙色', '黄色', '绿色', '青色', '蓝色', '紫色', '粉色'], message: '你是小小颜色大师！' },
         { name: '颜色魔法', rounds: 6, choices: 4, palette: colors.map(c => c.name), message: '恭喜通关！你是颜色魔法师！' }
       ];
       const totalRounds = levels.reduce((s, l) => s + l.rounds, 0);
