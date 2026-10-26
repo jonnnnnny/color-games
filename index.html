@@ -1174,16 +1174,22 @@
          顺序播报（queue:true）时若正在播，只记下最新一句，等当前播完再播，绝不叠加排队。 */
       let pendingSpeech = null;
       function speak(text, opts = {}) {
-        if (!soundEnabled || !('speechSynthesis' in window)) return;
+        if (!soundEnabled || !('speechSynthesis' in window)) { if (opts.onend) opts.onend(); return; }
         const synth = window.speechSynthesis;
         if (opts.queue && synth.speaking) { pendingSpeech = text; return; }
         synth.cancel();
         pendingSpeech = null;
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'zh-CN'; u.rate = .82; u.pitch = 1.18;
-        u.onend = () => {
+        // onend：播完（或播出失败/被取消）时回调一次，先放行排队的语音再跑回调。
+        // 注意：queue 模式下若正好在播，本句只进 pending 槽，onend 不会被记住。
+        let done = false;
+        const finish = () => {
+          if (done) return; done = true;
           if (pendingSpeech) { const t = pendingSpeech; pendingSpeech = null; speak(t); }
+          if (opts.onend) opts.onend();
         };
+        u.onend = finish; u.onerror = finish;
         synth.speak(u);
       }
       function stopSpeech() {
@@ -1451,9 +1457,18 @@
           btn.classList.add('is-wrong'); playWrong(); combo = 0; wrongCount += 1;
           lives -= 1; renderLives(); updateHud();
           el.hint.innerHTML = `是<strong>${currentColor.name}</strong>哦，记住它！`;
-          speak(`你选的是${color.name}，不对哦，再想想`);
           setTimeout(() => btn.classList.remove('is-wrong'), 420);
-          if (lives <= 0) { locked = true; setTimeout(finishGame, 600); }
+          if (lives <= 0) {
+            locked = true;
+            // 结算画面等这句播完再出（至少保留原来 600ms 的停顿）；已回主页则不跳
+            const t0 = Date.now();
+            speak(`你选的是${color.name}，不对哦，再想想`, { onend: () => {
+              if (el.play.hidden) return;
+              setTimeout(() => { if (!el.play.hidden) finishGame(); }, Math.max(0, 600 - (Date.now() - t0)));
+            } });
+          } else {
+            speak(`你选的是${color.name}，不对哦，再想想`);
+          }
           return;
         }
         locked = true;
@@ -1463,11 +1478,18 @@
         document.querySelectorAll('.color-choice').forEach(c => c.disabled = true);
         el.colorName.style.opacity = ''; renderItem(true);
         el.hint.innerHTML = `<strong>记性真棒！</strong>${currentColor.name}${currentItem.noun}`;
-        speak(`答对啦！这是${currentColor.name}`);
         el.starsText.textContent = `★ ${score}`;
         updateHud();
         round += 1;
-        setTimeout(() => { if (lives > 0) nextMemoryRound(); else finishGame(); }, 1000);
+        // 下一题等这句答对语音播完再出（至少保留原来 1000ms 的停顿）；已回主页则不跳
+        const t0 = Date.now();
+        speak(`答对啦！这是${currentColor.name}`, { onend: () => {
+          if (el.play.hidden) return;
+          setTimeout(() => {
+            if (el.play.hidden) return;
+            if (lives > 0) nextMemoryRound(); else finishGame();
+          }, Math.max(0, 1000 - (Date.now() - t0)));
+        } });
       }
 
       /* ---- 模式三：限时冲刺 ---- */
