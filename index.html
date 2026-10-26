@@ -1153,6 +1153,8 @@
         if (!soundEnabled) return;
         try {
           audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          // iOS Safari 的 AudioContext 初始是 suspended，不 resume 就全程静音
+          if (audioCtx.state === 'suspended') audioCtx.resume();
           const t = audioCtx.currentTime + delay;
           const o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = type; o.frequency.value = freq;
@@ -1176,6 +1178,14 @@
         window.speechSynthesis.speak(u);
       }
       function stopSpeech() { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+
+      /* iOS 手势解锁音频：第一次触摸就把 AudioContext 唤醒，之后定时器里的音效也能响 */
+      document.addEventListener('pointerdown', () => {
+        try {
+          audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) {}
+      }, { once: true });
 
       /* ---------- 粒子特效 ---------- */
       function spawnBurst(x, y, count = 18) {
@@ -3072,6 +3082,12 @@
       }
 
       /* ===== 数数小能手（F-7.3） ===== */
+      /* 点得快时只读最后一次：iOS 的 speechSynthesis.cancel() 清不掉队列，连点会把数字连读一串 */
+      let countSpeakTimer = null;
+      function speakCount(n) {
+        clearTimeout(countSpeakTimer);
+        countSpeakTimer = setTimeout(() => speak(String(n)), 150);
+      }
       let numCountLevel = 0, numCountIdx = 0, numCountTarget = 0, numCountCounted = 0;
       const numCountLevels = [
         { name: '点数 0-3', max: 3, choices: 2 },
@@ -3115,7 +3131,7 @@
               badge.className = 'count-badge';
               badge.textContent = numCountCounted;
               item.appendChild(badge);
-              speak(String(numCountCounted));
+              speakCount(numCountCounted);
               if (numCountCounted >= numCountTarget) {
                 setTimeout(showCountChoices, 400);
               }
