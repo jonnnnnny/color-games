@@ -1411,7 +1411,7 @@
         };
         el.levelComplete.classList.add('show');
         confettiBurst();
-        speak(`第 ${levelIndex + 1} 关完成，${level.message}`);
+        speak(`第 ${levelIndex + 1} 关完成，${level.message}`, { queue: true });
       }
 
       /* ---- 模式二：记忆挑战 ---- */
@@ -1559,6 +1559,7 @@
           btn.classList.add('is-wrong'); playWrong(); combo = 0; wrongCount += 1;
           lives -= 1; renderLives(); updateHud();
           el.hint.innerHTML = `注意看，<strong>${distractor.name}</strong>才是不同的！`;
+          speak(`你选的是${color.name}，不对哦，再找找`);
           setTimeout(() => btn.classList.remove('is-wrong'), 420);
           if (lives <= 0) { locked = true; setTimeout(finishGame, 600); }
           return;
@@ -1569,6 +1570,7 @@
         spawnBurst(e.clientX, e.clientY);
         document.querySelectorAll('.color-choice').forEach(c => c.disabled = true);
         el.hint.innerHTML = `<strong>火眼金睛！</strong>是${distractor.name}`;
+        speak(`火眼金睛！这是${distractor.name}`);
         el.starsText.textContent = `★ ${score}`;
         updateHud();
         round += 1;
@@ -1759,7 +1761,7 @@
         };
         el.levelComplete.classList.add('show');
         confettiBurst();
-        speak(`第 ${shapeLevelIndex + 1} 关完成，${level.message}`);
+        speak(`第 ${shapeLevelIndex + 1} 关完成，${level.message}`, { queue: true });
       }
 
       /* ===== 模式六：自由探索（F-2.1） ===== */
@@ -1892,7 +1894,7 @@
           if (item.name === '白色' || item.name === '黄色') btn.classList.add('is-pale');
           btn.addEventListener('click', e => onEnlightenPick(item, btn, e));
           answersEl.appendChild(btn);
-          setTimeout(() => speak(`这是${item.name}，点一点${item.name}吧`), 200);
+          setTimeout(() => speak(`这是${item.name}，点一点${item.name}吧`, { queue: true }), 200);
         } else {
           nameEl.textContent = item.name.split('').join(' ');
           nameEl.style.color = item.color;
@@ -1913,7 +1915,7 @@
           btn.appendChild(art);
           btn.addEventListener('click', e => onEnlightenPick(item, btn, e));
           answersEl.appendChild(btn);
-          setTimeout(() => speak(`这是${item.name}，点一点${item.name}吧`), 200);
+          setTimeout(() => speak(`这是${item.name}，点一点${item.name}吧`, { queue: true }), 200);
         }
       }
 
@@ -1949,13 +1951,13 @@
         if (enlightenType === 'color') {
           title.textContent = '太棒啦！';
           text.textContent = `你认识了 ${enlightenQueue.length} 种颜色！`;
-          speak(`太棒啦！你认识了${enlightenQueue.length}种颜色！`);
+          speak(`太棒啦！你认识了${enlightenQueue.length}种颜色！`, { queue: true });
           nextBtn.textContent = '再学一次';
           nextBtn.onclick = () => { celebrate.hidden = true; document.getElementById('enlightenArea').hidden = false; startEnlighten('color'); };
         } else {
           title.textContent = '太棒啦！';
           text.textContent = `你认识了 ${enlightenQueue.length} 种形状！`;
-          speak(`太棒啦！你认识了${enlightenQueue.length}种形状！`);
+          speak(`太棒啦！你认识了${enlightenQueue.length}种形状！`, { queue: true });
           nextBtn.textContent = '再学一次';
           nextBtn.onclick = () => { celebrate.hidden = true; document.getElementById('enlightenArea').hidden = false; startEnlighten('shape'); };
         }
@@ -2498,7 +2500,7 @@
               if (puzzleDone >= puzzleTotal) {
                 setTimeout(() => {
                   confettiBurst();
-                  speak('全部拼完啦！你真棒！');
+                  speak('全部拼完啦！你真棒！', { queue: true });
                   document.getElementById('puzzleHint').innerHTML = '🎉 全部拼完啦！';
                   setTimeout(() => { if (puzzleActive) startPuzzleSimple(); }, 2500);
                 }, 400);
@@ -2650,7 +2652,7 @@
             if (puzzleDone >= puzzleTotal) {
               setTimeout(() => {
                 confettiBurst();
-                speak(`${puzzlePatterns[puzzlePatternIdx].name}拼完啦！你真棒！`);
+                speak(`${puzzlePatterns[puzzlePatternIdx].name}拼完啦！你真棒！`, { queue: true });
                 document.getElementById('puzzleHint').innerHTML = `🎉 ${puzzlePatterns[puzzlePatternIdx].name}拼完啦！`;
                 setTimeout(() => { if (puzzleActive) startPuzzlePattern(); }, 2800);
               }, 400);
