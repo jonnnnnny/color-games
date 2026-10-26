@@ -1170,14 +1170,26 @@
       function playTimeUp() { tone(392, .18, 'triangle'); tone(330, .2, 'triangle', .16); tone(262, .3, 'triangle', .34); }
       function playCombo(n) { tone(660 + n * 40, .12, 'sine', 0, .06); tone(880 + n * 40, .14, 'sine', .09); }
 
-      function speak(text) {
+      /* 语音串行：iOS 的 cancel() 清不掉队列，两句挨着播就会连读。
+         顺序播报（queue:true）时若正在播，只记下最新一句，等当前播完再播，绝不叠加排队。 */
+      let pendingSpeech = null;
+      function speak(text, opts = {}) {
         if (!soundEnabled || !('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
+        const synth = window.speechSynthesis;
+        if (opts.queue && synth.speaking) { pendingSpeech = text; return; }
+        synth.cancel();
+        pendingSpeech = null;
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'zh-CN'; u.rate = .82; u.pitch = 1.18;
-        window.speechSynthesis.speak(u);
+        u.onend = () => {
+          if (pendingSpeech) { const t = pendingSpeech; pendingSpeech = null; speak(t); }
+        };
+        synth.speak(u);
       }
-      function stopSpeech() { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+      function stopSpeech() {
+        pendingSpeech = null;
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
 
       /* iOS 手势解锁音频：第一次触摸就把 AudioContext 唤醒，之后定时器里的音效也能响 */
       document.addEventListener('pointerdown', () => {
@@ -1352,7 +1364,7 @@
         el.hint.innerHTML = `找到和<strong>${currentItem.noun}</strong>一样的颜色吧！`;
         renderProgress();
         renderChoices(makeChoices(currentColor, level.choices, level.palette), onLevelPick);
-        setTimeout(() => speak(`请找出${currentColor.name}的${currentItem.noun}`), 200);
+        setTimeout(() => speak(`请找出${currentColor.name}的${currentItem.noun}`, { queue: true }), 200);
       }
       function onLevelPick(color, btn, e) {
         if (locked) return;
@@ -1538,7 +1550,7 @@
           btn.addEventListener('click', ev => onOddPick(color, btn, ev));
           el.answers.appendChild(btn);
         });
-        setTimeout(() => speak('找出颜色不一样的那一块'), 200);
+        setTimeout(() => speak('找出颜色不一样的那一块', { queue: true }), 200);
       }
       function onOddPick(color, btn, e) {
         if (locked) return;
@@ -1678,7 +1690,7 @@
 
         const choices = makeShapeChoices(currentShape, level.choices, level.palette);
         renderShapeChoices(choices, onShapePick);
-        setTimeout(() => speak(`请找出${currentShape.name}`), 200);
+        setTimeout(() => speak(`请找出${currentShape.name}`, { queue: true }), 200);
       }
       function makeShapeChoices(answer, count, palette) {
         const pool = palette ? shapes.filter(s => palette.includes(s.name)) : shapes;
@@ -2982,7 +2994,7 @@
           replayFn();
         };
         confettiBurst();
-        speak(title + ' ' + text);
+        speak(title + ' ' + text, { queue: true });
       }
       document.getElementById('numHomeButton').addEventListener('click', goHome);
       function makeDots(count, color) {
@@ -3078,7 +3090,7 @@
           });
           choicesEl.appendChild(btn);
         });
-        setTimeout(() => speak(item.value === 0 ? `0 表示没有，跟我读，零——` : `跟我读，${item.name}——`), 200);
+        setTimeout(() => speak(item.value === 0 ? `0 表示没有，跟我读，零——` : `跟我读，${item.name}——`, { queue: true }), 200);
       }
 
       /* ===== 数数小能手（F-7.3） ===== */
@@ -3180,9 +3192,9 @@
             });
             choicesEl.appendChild(btn);
           });
-          speak('数好了吗？选一个数字吧');
+          speak('数好了吗？选一个数字吧', { queue: true });
         }
-        setTimeout(() => speak('数一数，有几个？伸出小手指，一个一个点'), 200);
+        setTimeout(() => speak('数一数，有几个？伸出小手指，一个一个点', { queue: true }), 200);
       }
 
       /* ===== 数字找朋友（F-7.4） ===== */
@@ -3253,7 +3265,7 @@
           });
           groupsEl.appendChild(grp);
         });
-        setTimeout(() => speak(numMatchTarget === 0 ? `0 的朋友在哪里？哪组什么都没有？` : `${numMatchTarget} 的朋友在哪里？哪组有 ${numMatchTarget} 个？`), 200);
+        setTimeout(() => speak(numMatchTarget === 0 ? `0 的朋友在哪里？哪组什么都没有？` : `${numMatchTarget} 的朋友在哪里？哪组有 ${numMatchTarget} 个？`, { queue: true }), 200);
       }
 
       /* ===== 数字排排队（F-7.5） ===== */
@@ -3359,7 +3371,7 @@
           });
           cardsEl.appendChild(card);
         });
-        setTimeout(() => speak('帮数字宝宝排队！从小到大排好！'), 200);
+        setTimeout(() => speak('帮数字宝宝排队！从小到大排好！', { queue: true }), 200);
       }
 
       /* ===== 数物配对卡（F-7.6） ===== */
@@ -3420,7 +3432,7 @@
           btn.addEventListener('click', () => onMemCardClick(btn, card, i));
           grid.appendChild(btn);
         });
-        setTimeout(() => speak('翻一翻，找到数字和数量一样的卡片！'), 200);
+        setTimeout(() => speak('翻一翻，找到数字和数量一样的卡片！', { queue: true }), 200);
       }
       function onMemCardClick(btn, card, idx) {
         if (numMemLock || btn.classList.contains('flipped') || btn.classList.contains('matched')) return;
