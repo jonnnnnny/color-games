@@ -1391,14 +1391,19 @@
         if (combo >= 2 && combo % 3 === 0) popupText(`连击 x${combo}！`);
         document.querySelectorAll('.color-choice').forEach(c => c.disabled = true);
         el.hint.innerHTML = `<strong>答对啦！</strong>${currentColor.name}${currentItem.noun}真漂亮！`;
-        speak(`答对啦！这是 ${currentColor.name}`);
+        // 下一题/过关画面等这句答对语音播完再出（至少保留原来 850ms 的停顿）；已回主页则不跳
+        const t0 = Date.now();
+        speak(`答对啦！这是 ${currentColor.name}`, { onend: () => {
+          if (el.play.hidden) return;
+          setTimeout(() => {
+            if (el.play.hidden) return;
+            if (questionInLevel === levels[levelIndex].rounds) showLevelComplete();
+            else renderQuestion();
+          }, Math.max(0, 850 - (Date.now() - t0)));
+        } });
         recordMastery('color', currentColor.name, true);
         updateHud();
         round += 1; questionInLevel += 1;
-        setTimeout(() => {
-          if (questionInLevel === levels[levelIndex].rounds) showLevelComplete();
-          else renderQuestion();
-        }, 850);
       }
       function showLevelComplete() {
         el.gameArea.hidden = true;
