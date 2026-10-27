@@ -3276,13 +3276,11 @@
           const grp = document.createElement('button');
           grp.className = 'match-group';
           grp.type = 'button';
-          const objColor = pick(colors);
           if (v === 0) {
             grp.innerHTML = '<span style="color:#999;font-size:14px">空</span>';
           } else {
-            let dots = '';
-            for (let i = 0; i < v; i++) dots += `<span class="match-obj" style="background:${objColor.hex}"></span>`;
-            grp.innerHTML = dots;
+            // 用认识数字里同数字的固定图标代替抽象色点，孩子数的是认识过的东西
+            grp.innerHTML = makeObjects(v);
           }
           grp.addEventListener('click', e => {
             if (v === numMatchTarget) {
