@@ -1764,14 +1764,19 @@
         if (combo >= 2 && combo % 3 === 0) popupText(`连击 x${combo}！`);
         document.querySelectorAll('.color-choice').forEach(c => c.disabled = true);
         el.hint.innerHTML = `<strong>答对啦！</strong>这是${currentShape.name}！`;
-        speak(`答对啦！这是${currentShape.name}`);
+        // 下一题/过关画面等这句答对语音播完再出（至少保留原来 850ms 的停顿）；已回主页则不跳
+        const t0 = Date.now();
+        speak(`答对啦！这是${currentShape.name}`, { onend: () => {
+          if (el.play.hidden) return;
+          setTimeout(() => {
+            if (el.play.hidden) return;
+            if (shapeQuestionInLevel === shapeLevels[shapeLevelIndex].rounds) showShapeLevelComplete();
+            else renderShapeQuestion();
+          }, Math.max(0, 850 - (Date.now() - t0)));
+        } });
         recordMastery('shape', currentShape.name, true);
         updateHud();
         shapeRound += 1; shapeQuestionInLevel += 1;
-        setTimeout(() => {
-          if (shapeQuestionInLevel === shapeLevels[shapeLevelIndex].rounds) showShapeLevelComplete();
-          else renderShapeQuestion();
-        }, 850);
       }
       function showShapeLevelComplete() {
         el.gameArea.hidden = true;
