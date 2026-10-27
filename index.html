@@ -3384,9 +3384,11 @@
                   placed[idx] = v;
                   playCorrect(); tone(660, .1);
                   dropped = true;
+                  // 拖对后读出该数字；最后一张时庆祝语排队，等数字读完再播
+                  speak(numbers[v].name);
                   if (placed.every(p => p !== null)) {
                     score++; el.scoreText.textContent = `⭐ ${score}`;
-                    speak('火车出发啦！排好队了！');
+                    speak('火车出发啦！排好队了！', { queue: true });
                     setTimeout(() => { numOrderLevel++; renderNumOrder(); }, 1500);
                   }
                 } else if (!placed[idx]) {
