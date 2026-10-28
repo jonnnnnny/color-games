@@ -2361,6 +2361,64 @@
             { shape: '三角形', cls: 'shape-triangle', color: '#6dbf6e', x: 30, y: 50, w: 40, h: 40 },
             { shape: '方形', cls: 'shape-square', color: '#b07a52', x: 44, y: 82, w: 12, h: 12 }
           ]
+        },
+        {
+          name: '小狗',
+          pieces: [
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 28, y: 8, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 56, y: 8, w: 16, h: 16 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 20, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 46, y: 48, w: 8, h: 8 }
+          ]
+        },
+        {
+          name: '小鸟',
+          pieces: [
+            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 32, y: 32, w: 36, h: 36 },
+            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 55, y: 15, w: 24, h: 24 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 76, y: 24, w: 12, h: 12 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 62, y: 22, w: 7, h: 7 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#6dbf6e', x: 16, y: 38, w: 18, h: 18 }
+          ]
+        },
+        {
+          name: '太阳',
+          pieces: [
+            { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 35, y: 35, w: 30, h: 30 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 42, y: 8, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 42, y: 76, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 8, y: 42, w: 16, h: 16 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 76, y: 42, w: 16, h: 16 }
+          ]
+        },
+        {
+          name: '蘑菇',
+          pieces: [
+            { shape: '梯形', cls: 'shape-trapezoid', color: '#ef6b67', x: 24, y: 10, w: 52, h: 28 },
+            { shape: '方形', cls: 'shape-square', color: '#e8e8e8', x: 42, y: 38, w: 16, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 34, y: 16, w: 8, h: 8 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 58, y: 16, w: 8, h: 8 }
+          ]
+        },
+        {
+          name: '小兔',
+          pieces: [
+            { shape: '梯形', cls: 'shape-trapezoid', color: '#ee89b8', x: 32, y: 4, w: 12, h: 24 },
+            { shape: '梯形', cls: 'shape-trapezoid', color: '#ee89b8', x: 56, y: 4, w: 12, h: 24 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 26, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 40, y: 40, w: 7, h: 7 },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 54, y: 40, w: 7, h: 7 },
+            { shape: '三角形', cls: 'shape-triangle', color: '#ee89b8', x: 46, y: 50, w: 8, h: 8 }
+          ]
+        },
+        {
+          name: '风筝',
+          pieces: [
+            { shape: '菱形', cls: 'shape-diamond', color: '#a27bd0', x: 35, y: 8, w: 30, h: 30 },
+            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 46, y: 44, w: 8, h: 8 },
+            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 46, y: 56, w: 8, h: 8 },
+            { shape: '方形', cls: 'shape-square', color: '#f4cd4e', x: 46, y: 68, w: 8, h: 8 }
+          ]
         }
       ];
 
@@ -3307,7 +3365,10 @@
       const numOrderLevels = [
         { name: '排队 0-3', range: [0,1,2,3] },
         { name: '排队 0-5', range: [0,1,2,3,4,5] },
-        { name: '随机排序', range: null }
+        { name: '排队 0-7', range: [0,1,2,3,4,5,6,7] },
+        { name: '排队 0-10', range: [0,1,2,3,4,5,6,7,8,9,10] },
+        { name: '随机排序', range: null },
+        { name: '随机排序 5 个', range: null, count: 5 }
       ];
       function startNumOrder() {
         numOrderLevel = 0; score = 0;
@@ -3326,7 +3387,7 @@
           seq = [...lv.range];
         } else {
           const pool = [0,1,2,3,4,5,6,7,8,9,10];
-          seq = shuffled(pool).slice(0, 4).sort((a,b) => a - b);
+          seq = shuffled(pool).slice(0, lv.count || 4).sort((a,b) => a - b);
         }
         const c = numContent();
         c.innerHTML = `
