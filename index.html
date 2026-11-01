@@ -1962,16 +1962,21 @@
         const hintEl = document.getElementById('enlightenHint');
         if (enlightenType === 'color') {
           hintEl.innerHTML = `<strong>太棒啦！</strong>这是${item.name}！`;
-          speak(`太棒啦！这是${item.name}`);
           recordMastery('color', item.name, true);
         } else {
           hintEl.innerHTML = `<strong>太棒啦！</strong>这是${item.name}！`;
-          speak(`太棒啦！这是${item.name}`);
           recordMastery('shape', item.name, true);
         }
         document.querySelectorAll('#enlightenAnswers .color-choice').forEach(c => c.disabled = true);
         enlightenIndex += 1;
-        setTimeout(() => renderEnlightenQuestion(), 1200);
+        // 下一题/结算画面等这句答对语音播完再出（至少保留原来 1200ms 的停顿）；已离开启蒙画面则不跳
+        const t0 = Date.now();
+        speak(`太棒啦！这是${item.name}`, { onend: () => {
+          setTimeout(() => {
+            if (document.getElementById('enlightenArea').hidden) return;
+            renderEnlightenQuestion();
+          }, Math.max(0, 1200 - (Date.now() - t0)));
+        } });
       }
 
       function showEnlightenFinish() {
