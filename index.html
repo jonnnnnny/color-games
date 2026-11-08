@@ -1153,8 +1153,8 @@
         if (!soundEnabled) return;
         try {
           audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-          // iOS Safari 的 AudioContext 初始是 suspended，不 resume 就全程静音
-          if (audioCtx.state === 'suspended') audioCtx.resume();
+          // iOS Safari 的 AudioContext 初始是 suspended、被打断后是 interrupted，不 resume 就全程静音
+          if (audioCtx.state !== 'running') audioCtx.resume();
           const t = audioCtx.currentTime + delay;
           const o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = type; o.frequency.value = freq;
@@ -1197,13 +1197,25 @@
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       }
 
-      /* iOS 手势解锁音频：第一次触摸就把 AudioContext 唤醒，之后定时器里的音效也能响 */
-      document.addEventListener('pointerdown', () => {
+      /* iOS 手势解锁音频：每次触摸都尝试唤醒 AudioContext（不能只解锁一次：
+         iOS 会在语音播报、切后台、来电打断后把 context 重新挂起/interrupted，
+         只解锁一次的话限时冲刺这种靠定时器音效的模式会再次全程静音）。
+         首次触摸时再播一个静音 buffer，把 Web Audio 在手势里彻底激活。 */
+      let audioUnlocked = false;
+      function unlockAudio() {
         try {
           audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-          if (audioCtx.state === 'suspended') audioCtx.resume();
+          if (audioCtx.state !== 'running') audioCtx.resume();
+          if (!audioUnlocked) {
+            const buf = audioCtx.createBuffer(1, 1, 22050);
+            const src = audioCtx.createBufferSource();
+            src.buffer = buf; src.connect(audioCtx.destination); src.start(0);
+            audioUnlocked = true;
+          }
         } catch (e) {}
-      }, { once: true });
+      }
+      document.addEventListener('pointerdown', unlockAudio);
+      document.addEventListener('touchend', unlockAudio);
 
       /* ---------- 粒子特效 ---------- */
       function spawnBurst(x, y, count = 18) {
@@ -1297,6 +1309,7 @@
         card.addEventListener('click', () => startMode(card.dataset.mode));
       });
       function startMode(key) {
+        unlockAudio();
         mode = key;
         el.home.hidden = true; el.play.hidden = false;
         el.finish.classList.remove('show'); el.levelComplete.classList.remove('show');
@@ -1518,6 +1531,15 @@
         renderItem(true);
         el.hint.innerHTML = `找到<strong>${currentItem.noun}</strong>的颜色！`;
         renderChoices(makeChoices(currentColor, 4), onTimedPick);
+        // 限时冲刺以前全程没有语音、只靠音效，孩子不会读题面文字。
+        // 每题读出题目（不用 queue：冲刺节奏快，排队会让语音落后于当前题；
+        // 直接播会打断上一题未读完的语音，始终跟当前题一致）。
+        // 已结算（gameArea 隐藏）时不再补读题目，避免盖掉结算语音。
+        setTimeout(() => {
+          if (mode === 'timed' && timeLeft > 0 && !el.gameArea.hidden) {
+            speak(`请找出${currentColor.name}的${currentItem.noun}`);
+          }
+        }, 150);
       }
       function onTimedPick(color, btn, e) {
         if (locked) return;
@@ -2197,6 +2219,7 @@
         if (!soundEnabled) return;
         try {
           audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state !== 'running') audioCtx.resume();
           const t = audioCtx.currentTime;
           const o = audioCtx.createOscillator(), g = audioCtx.createGain();
           o.type = 'sine';
