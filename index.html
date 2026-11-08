@@ -3199,11 +3199,17 @@
             if (n.value === item.value) {
               btn.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
               score++; el.scoreText.textContent = `⭐ ${score}`;
-              speak(item.value === 0 ? `真棒！0 就是没有，答对啦！` : `真棒！答对啦！`);
               recordMastery('number', String(item.value), true);
               document.querySelectorAll('#numEnlightenChoices .num-choice').forEach(b => b.disabled = true);
               numEnlightenIdx++;
-              setTimeout(renderNumEnlighten, 1000);
+              // 等答对语音播完再出下一题（0 的「0 就是没有」更长，固定 1000ms 时画面先跳、语音落在下一题上）；1000ms 保留为最短停顿
+              const t0 = Date.now();
+              speak(item.value === 0 ? `真棒！0 就是没有，答对啦！` : `真棒！答对啦！`, { onend: () => {
+                setTimeout(() => {
+                  if (document.getElementById('numArea').hidden) return;
+                  renderNumEnlighten();
+                }, Math.max(0, 1000 - (Date.now() - t0)));
+              } });
             } else {
               btn.classList.add('is-wrong'); playWrong();
               speak('再看看哦');
@@ -3291,21 +3297,25 @@
               if (v === numCountTarget) {
                 btn.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
                 score++; el.scoreText.textContent = `⭐ ${score}`;
-                speak(numCountTarget === 0 ? `对了！0 个，表示没有！` : `对了！${numCountTarget} 个！`);
                 recordMastery('number', String(numCountTarget), true);
                 document.querySelectorAll('#countChoices .num-choice').forEach(b => b.disabled = true);
                 numCountIdx++;
-                setTimeout(() => {
-                  if (numCountIdx >= 5) {
-                    numCountLevel++;
-                    if (numCountLevel >= numCountLevels.length) {
-                      showNumCelebrate('太棒啦！', '你成了数数小能手！', startNumCount);
-                      return;
+                // 等答对语音播完再出下一题（0 的「表示没有」更长，固定 1200ms 时语音会落在下一题上）；1200ms 保留为最短停顿
+                const t0 = Date.now();
+                speak(numCountTarget === 0 ? `对了！0 个，表示没有！` : `对了！${numCountTarget} 个！`, { onend: () => {
+                  setTimeout(() => {
+                    if (document.getElementById('numArea').hidden) return;
+                    if (numCountIdx >= 5) {
+                      numCountLevel++;
+                      if (numCountLevel >= numCountLevels.length) {
+                        showNumCelebrate('太棒啦！', '你成了数数小能手！', startNumCount);
+                        return;
+                      }
+                      numCountIdx = 0;
                     }
-                    numCountIdx = 0;
-                  }
-                  renderNumCount();
-                }, 1200);
+                    renderNumCount();
+                  }, Math.max(0, 1200 - (Date.now() - t0)));
+                } });
               } else {
                 btn.classList.add('is-wrong'); playWrong();
                 speak('再数一次试试看');
@@ -3372,11 +3382,17 @@
             if (v === numMatchTarget) {
               grp.classList.add('is-correct'); playCorrect(); spawnBurst(e.clientX, e.clientY, 20);
               score++; el.scoreText.textContent = `⭐ ${score}`;
-              speak(numMatchTarget === 0 ? `0 和空的是好朋友！` : `${numMatchTarget} 和 ${numMatchTarget} 个是好朋友！`);
               recordMastery('number', String(numMatchTarget), true);
               document.querySelectorAll('#matchGroups .match-group').forEach(b => b.disabled = true);
               numMatchIdx++;
-              setTimeout(renderNumMatch, 1200);
+              // 等答对语音播完再出下一题（同数字启蒙/数数：固定 1200ms 时语音会落在下一题上）；1200ms 保留为最短停顿
+              const t0 = Date.now();
+              speak(numMatchTarget === 0 ? `0 和空的是好朋友！` : `${numMatchTarget} 和 ${numMatchTarget} 个是好朋友！`, { onend: () => {
+                setTimeout(() => {
+                  if (document.getElementById('numArea').hidden) return;
+                  renderNumMatch();
+                }, Math.max(0, 1200 - (Date.now() - t0)));
+              } });
             } else {
               grp.classList.add('is-wrong'); playWrong();
               speak('数数看，这是几个？');
@@ -3574,13 +3590,22 @@
               a.btn.classList.add('matched');
               b.btn.classList.add('matched');
               playCorrect();
-              speak(`${a.card.value === 0 ? '0 和空盘子' : `${a.card.value} 和 ${a.card.value} 个`}，配对成功！`);
+              const matchedText = `${a.card.value === 0 ? '0 和空盘子' : `${a.card.value} 和 ${a.card.value} 个`}，配对成功！`;
               numMemMatched++;
               score++; el.scoreText.textContent = `⭐ ${score}`;
               numMemFlipped = []; numMemLock = false;
               const lv = numMemLevels[numMemLevel];
               if (numMemMatched >= lv.pairs) {
-                setTimeout(() => { numMemLevel++; renderNumMemory(); }, 1200);
+                // 最后一对：等配对语音播完再进下一关（同其他数字游戏）；1200ms 保留为最短停顿
+                const t0 = Date.now();
+                speak(matchedText, { onend: () => {
+                  setTimeout(() => {
+                    if (document.getElementById('numArea').hidden) return;
+                    numMemLevel++; renderNumMemory();
+                  }, Math.max(0, 1200 - (Date.now() - t0)));
+                } });
+              } else {
+                speak(matchedText);
               }
             }, 500);
           } else {
