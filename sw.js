@@ -1,5 +1,8 @@
 // Service Worker — 彩虹小课堂 PWA 离线缓存
-const CACHE_NAME = 'color-games-v2.6';
+// 注意：每次发布新版 index.html 都必须 bump CACHE_NAME，否则旧设备会一直吃旧缓存。
+// 文档请求（导航 / index.html）走 network-first，新版部署后能直达设备；
+// 其他静态资源仍走 cache-first 保证离线可用。
+const CACHE_NAME = 'color-games-v2.7';
 const CACHE_URLS = [
   './',
   './index.html',
@@ -27,9 +30,29 @@ self.addEventListener('activate', event => {
   );
 });
 
-// 请求拦截：cache-first 策略
+// 请求拦截
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  const isDocument = event.request.mode === 'navigate'
+    || url.pathname.endsWith('/')
+    || url.pathname.endsWith('/index.html');
+
+  // 文档：network-first，在线时永远拿最新版并回写缓存，离线才用缓存
+  if (isDocument) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if (response.ok && url.origin === self.location.origin) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
+
+  // 其他资源：cache-first
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
