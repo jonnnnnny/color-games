@@ -257,6 +257,8 @@
       .explore-card.exp-shape .shape-art { width: 48px; height: 48px; }
       .explore-card.exp-shape .shape-art.shape-triangle { width: 0; height: 0; border-right: 30px solid transparent; border-bottom: 52px solid var(--s-color); border-left: 30px solid transparent; }
       .explore-card.exp-shape .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 6px; }
+      /* 组合页卡片用浅紫底，白色/浅色图形才看得清 */
+      .explore-card.exp-combo { background: #f5f1fa; }
       .explore-card.pop { animation: pop .42s ease; }
       .explore-tabs { display: flex; gap: 8px; margin-top: 14px; }
       .explore-tab { padding: 8px 18px; border: 0; border-radius: 99px; font: inherit; font-size: 15px; font-weight: 900; color: var(--ink); background: #f0e8dd; cursor: pointer; transition: all .15s ease; }
@@ -829,6 +831,7 @@
             <div class="explore-tabs">
               <button class="explore-tab active" id="exploreTabColor" type="button">🎨 颜色</button>
               <button class="explore-tab" id="exploreTabShape" type="button">🔷 形状</button>
+              <button class="explore-tab" id="exploreTabCombo" type="button">🌈 颜色+形状</button>
             </div>
             <div class="explore-grid" id="exploreGrid"></div>
             <p class="hint" id="exploreHint">点一点，听听它叫什么名字！</p>
@@ -1829,6 +1832,7 @@
         exploreTab = 'color';
         document.getElementById('exploreTabColor').classList.add('active');
         document.getElementById('exploreTabShape').classList.remove('active');
+        document.getElementById('exploreTabCombo').classList.remove('active');
         renderExploreGrid();
         speak('点一点，听听它们叫什么名字');
       }
@@ -1851,7 +1855,7 @@
             });
             grid.appendChild(card);
           });
-        } else {
+        } else if (exploreTab === 'shape') {
           shapes.forEach(shape => {
             const card = document.createElement('button');
             card.className = 'explore-card exp-shape';
@@ -1874,18 +1878,55 @@
             });
             grid.appendChild(card);
           });
+        } else {
+          // 颜色+形状：每个形状 × 每种颜色，标注「什么颜色的什么形状」
+          shapes.forEach(shape => {
+            colors.forEach(color => {
+              const comboName = `${color.name}的${shape.name}`;
+              const card = document.createElement('button');
+              card.className = 'explore-card exp-shape exp-combo';
+              card.type = 'button';
+              const art = document.createElement('span');
+              art.className = `shape-art ${shape.cls}`;
+              art.style.setProperty('--s-color', color.hex);
+              card.appendChild(art);
+              const label = document.createElement('div');
+              label.className = 'explore-label';
+              label.textContent = comboName;
+              card.appendChild(label);
+              card.addEventListener('click', e => {
+                card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
+                playCorrect();
+                spawnBurst(e.clientX, e.clientY, 10);
+                speak(comboName);
+                document.getElementById('exploreHint').innerHTML = `这是<strong>${comboName}</strong>！`;
+                recordMastery('color', color.name, true);
+                recordMastery('shape', shape.name, true);
+              });
+              grid.appendChild(card);
+            });
+          });
         }
       }
       document.getElementById('exploreTabColor').addEventListener('click', () => {
         exploreTab = 'color';
         document.getElementById('exploreTabColor').classList.add('active');
         document.getElementById('exploreTabShape').classList.remove('active');
+        document.getElementById('exploreTabCombo').classList.remove('active');
         renderExploreGrid();
       });
       document.getElementById('exploreTabShape').addEventListener('click', () => {
         exploreTab = 'shape';
         document.getElementById('exploreTabShape').classList.add('active');
         document.getElementById('exploreTabColor').classList.remove('active');
+        document.getElementById('exploreTabCombo').classList.remove('active');
+        renderExploreGrid();
+      });
+      document.getElementById('exploreTabCombo').addEventListener('click', () => {
+        exploreTab = 'combo';
+        document.getElementById('exploreTabCombo').classList.add('active');
+        document.getElementById('exploreTabColor').classList.remove('active');
+        document.getElementById('exploreTabShape').classList.remove('active');
         renderExploreGrid();
       });
 
