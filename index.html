@@ -277,6 +277,9 @@
       .shape-choice .shape-art { width: 56px; height: 56px; }
       .shape-choice .shape-art.shape-triangle { width: 0; height: 0; border-right: 32px solid transparent; border-bottom: 56px solid var(--s-color); border-left: 32px solid transparent; background: transparent; box-shadow: none; }
       .shape-choice .shape-art.shape-heart { width: 40px; height: 36px; margin-top: 6px; }
+      /* 形状启蒙选项是大按钮：图形固定正方形尺寸，不能用百分比（按钮是宽矩形，百分比会把圆拉成椭圆、方拉成长方形、三角撑成梯形） */
+      #enlightenAnswers .shape-art { width: 96px; height: 96px; }
+      #enlightenAnswers .shape-art.shape-triangle { width: 0; height: 0; border-right: 55px solid transparent; border-bottom: 95px solid var(--s-color); border-left: 55px solid transparent; }
       @media (max-width: 500px) {
         .color-choice.large { min-height: 140px; }
         .explore-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1960,14 +1963,12 @@
           hintEl.innerHTML = `点一点<strong>${item.name}</strong>吧！`;
           answersEl.innerHTML = '';
           const btn = document.createElement('button');
-          btn.className = 'color-choice large';
+          btn.className = 'color-choice large shape-choice';
           btn.type = 'button';
           btn.style.background = '#f5f1fa';
           const art = document.createElement('span');
           art.className = `shape-art ${item.cls}`;
           art.style.setProperty('--s-color', item.color);
-          art.style.width = '50%';
-          art.style.height = '50%';
           btn.appendChild(art);
           btn.addEventListener('click', e => onEnlightenPick(item, btn, e));
           answersEl.appendChild(btn);
