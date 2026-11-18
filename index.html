@@ -497,9 +497,25 @@
 
       /* ---------- 形状拼拼乐增强：图案拼图 ---------- */
       .puzzle-pattern-name { text-align: center; font-size: 20px; font-weight: 900; color: var(--purple); margin: 4px 0 8px; }
+      /* 完成图预览：棋盘上方的小成品，照着拼 */
+      .puzzle-preview-row { display: flex; align-items: center; gap: 12px; justify-content: center; margin: 4px 0 8px; }
+      .puzzle-preview-row .puzzle-pattern-name { flex: 1; text-align: left; margin: 0; }
+      .puzzle-preview { position: relative; width: 88px; height: 88px; flex: none; border-radius: 18px; background: #fff; border: 3px solid rgba(255,255,255,.72); box-shadow: 0 4px 0 rgba(68,54,102,.10); overflow: hidden; }
+      .puzzle-preview-piece { position: absolute; display: grid; place-items: center; }
+      .puzzle-preview-piece .shape-art { width: 100%; height: 100%; }
+      .puzzle-preview-piece .shape-art.shape-triangle { width: 100%; height: 100%; background: var(--s-color); border: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); filter: none; }
+      /* 碎片细节：眼睛/笑脸/轮毂，拼完一眼能认出来（只画在圆形、方形碎片上） */
+      .puzzle-detail { position: absolute; inset: 0; pointer-events: none; }
+      .puzzle-detail i { position: absolute; border-radius: 50%; background: #3c3653; }
+      .detail-eyes i, .detail-face i { top: 34%; width: 13%; height: 13%; }
+      .detail-eyes i:first-child, .detail-face i:first-child { left: 24%; }
+      .detail-eyes i:last-of-type, .detail-face i:last-of-type { right: 24%; }
+      .detail-face b { position: absolute; left: 33%; top: 56%; width: 34%; height: 20%; border-bottom: 3px solid #3c3653; border-radius: 0 0 50% 50%; }
+      .detail-eye i { left: 60%; top: 32%; width: 15%; height: 15%; }
+      .detail-hub i { left: 33%; top: 33%; width: 34%; height: 34%; background: #f5f1fa; }
       .puzzle-board { position: relative; width: 100%; max-width: 360px; margin: 0 auto; aspect-ratio: 1; border-radius: 20px; background: rgba(115,102,220,.06); border: 2px solid rgba(115,102,220,.12); }
-      .puzzle-target { position: absolute; display: grid; place-items: center; border: 2px dashed rgba(115,102,220,.3); border-radius: 14px; transition: all .2s ease; }
-      .puzzle-target .shape-art { width: 60%; aspect-ratio: 1 / 1; height: auto; max-height: 60%; opacity: .2; }
+      .puzzle-target { position: absolute; display: grid; place-items: center; border: 2px dashed var(--tint, rgba(115,102,220,.3)); border-radius: 14px; background: color-mix(in srgb, var(--tint, #7366dc) 12%, transparent); transition: all .2s ease; }
+      .puzzle-target .shape-art { width: 60%; aspect-ratio: 1 / 1; height: auto; max-height: 60%; opacity: .45; }
       .puzzle-target .shape-art.shape-triangle { width: 0; height: 0; border-right: 22px solid transparent; border-bottom: 38px solid var(--s-color); border-left: 22px solid transparent; }
       .puzzle-target .shape-art.shape-trapezoid { aspect-ratio: auto; height: 60%; max-height: none; }
       .puzzle-target .shape-art.shape-heart { width: 50%; height: 44%; margin-top: 6px; }
@@ -896,7 +912,10 @@
               <button class="puzzle-menu-btn" id="puzzleMenuSimple" type="button">🧩<span>形状配对</span></button>
               <button class="puzzle-menu-btn" id="puzzleMenuPattern" type="button">🏠<span>图形拼接</span></button>
             </div>
-            <div class="puzzle-pattern-name" id="puzzlePatternName"></div>
+            <div class="puzzle-preview-row" id="puzzlePreviewRow">
+              <div class="puzzle-preview" id="puzzlePreview" aria-label="完成的样子"></div>
+              <div class="puzzle-pattern-name" id="puzzlePatternName"></div>
+            </div>
             <div class="puzzle-board" id="puzzleBoard"></div>
             <div class="puzzle-tray" id="puzzleTray"></div>
             <div class="puzzle-stage" id="puzzleStage" style="display:none"></div>
@@ -2298,15 +2317,15 @@
           pieces: [
             { shape: '方形', cls: 'shape-square', color: '#a27bd0', x: 34, y: 26, w: 24, h: 24 },
             { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 22, y: 48, w: 36, h: 36 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 24, y: 76, w: 14, h: 14 },
-            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 56, y: 76, w: 14, h: 14 }
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 24, y: 76, w: 14, h: 14, detail: 'hub' },
+            { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 56, y: 76, w: 14, h: 14, detail: 'hub' }
           ]
         },
         {
           name: '雪人',
           pieces: [
             { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 55, w: 40, h: 40 },
-            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 35, y: 20, w: 30, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 35, y: 20, w: 30, h: 30, detail: 'eyes' },
             { shape: '三角形', cls: 'shape-triangle', color: '#ef6b67', x: 44, y: 32, w: 12, h: 12 },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 42, y: 26, w: 8, h: 8 }
           ]
@@ -2335,14 +2354,14 @@
           pieces: [
             { shape: '三角形', cls: 'shape-triangle', color: '#b07a52', x: 35, y: 55, w: 30, h: 30 },
             { shape: '圆形', cls: 'shape-circle', color: '#ee89b8', x: 32, y: 30, w: 36, h: 36 },
-            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 14, w: 24, h: 24 }
+            { shape: '圆形', cls: 'shape-circle', color: '#ef6b67', x: 38, y: 14, w: 24, h: 24, detail: 'face' }
           ]
         },
         {
           name: '小鱼',
           pieces: [
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 16, y: 40, w: 20, h: 20 },
-            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 34, y: 36, w: 30, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 34, y: 36, w: 30, h: 30, detail: 'eye' },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 52, y: 44, w: 8, h: 8 }
           ]
         },
@@ -2368,7 +2387,7 @@
           pieces: [
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 30, y: 10, w: 16, h: 16 },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 54, y: 10, w: 16, h: 16 },
-            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 22, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 22, w: 40, h: 40, detail: 'face' },
             { shape: '梯形', cls: 'shape-trapezoid', color: '#f59a45', x: 34, y: 60, w: 32, h: 26 }
           ]
         },
@@ -2414,7 +2433,7 @@
         {
           name: '机器人',
           pieces: [
-            { shape: '方形', cls: 'shape-square', color: '#9aa5b1', x: 38, y: 12, w: 24, h: 24 },
+            { shape: '方形', cls: 'shape-square', color: '#9aa5b1', x: 38, y: 12, w: 24, h: 24, detail: 'face' },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 42, y: 20, w: 8, h: 8 },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 54, y: 20, w: 8, h: 8 },
             { shape: '方形', cls: 'shape-square', color: '#5a9fe0', x: 34, y: 38, w: 32, h: 32 },
@@ -2437,14 +2456,14 @@
           pieces: [
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 28, y: 8, w: 16, h: 16 },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 56, y: 8, w: 16, h: 16 },
-            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 20, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f59a45', x: 30, y: 20, w: 40, h: 40, detail: 'face' },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 46, y: 48, w: 8, h: 8 }
           ]
         },
         {
           name: '小鸟',
           pieces: [
-            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 32, y: 32, w: 36, h: 36 },
+            { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 32, y: 32, w: 36, h: 36, detail: 'eye' },
             { shape: '圆形', cls: 'shape-circle', color: '#5a9fe0', x: 55, y: 15, w: 24, h: 24 },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 76, y: 24, w: 12, h: 12 },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 62, y: 22, w: 7, h: 7 },
@@ -2454,7 +2473,7 @@
         {
           name: '太阳',
           pieces: [
-            { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 35, y: 35, w: 30, h: 30 },
+            { shape: '圆形', cls: 'shape-circle', color: '#f4cd4e', x: 35, y: 35, w: 30, h: 30, detail: 'face' },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 42, y: 8, w: 16, h: 16 },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 42, y: 76, w: 16, h: 16 },
             { shape: '三角形', cls: 'shape-triangle', color: '#f59a45', x: 8, y: 42, w: 16, h: 16 },
@@ -2475,7 +2494,7 @@
           pieces: [
             { shape: '梯形', cls: 'shape-trapezoid', color: '#ee89b8', x: 32, y: 4, w: 12, h: 24 },
             { shape: '梯形', cls: 'shape-trapezoid', color: '#ee89b8', x: 56, y: 4, w: 12, h: 24 },
-            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 26, w: 40, h: 40 },
+            { shape: '圆形', cls: 'shape-circle', color: '#e8e8e8', x: 30, y: 26, w: 40, h: 40, detail: 'face' },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 40, y: 40, w: 7, h: 7 },
             { shape: '圆形', cls: 'shape-circle', color: '#3c3653', x: 54, y: 40, w: 7, h: 7 },
             { shape: '三角形', cls: 'shape-triangle', color: '#ee89b8', x: 46, y: 50, w: 8, h: 8 }
@@ -2499,19 +2518,21 @@
         document.getElementById('puzzleBoard').style.display = 'none';
         document.getElementById('puzzleTray').style.display = 'none';
         document.getElementById('puzzleStage').style.display = 'none';
+        document.getElementById('puzzlePreviewRow').style.display = 'none';
         document.getElementById('puzzlePatternName').textContent = '';
         document.getElementById('puzzleProgress').innerHTML = '';
         document.getElementById('puzzleHint').textContent = '选一个来玩吧！';
         speak('拼拼乐，选一个来玩吧');
       }
       document.getElementById('puzzleMenuSimple').addEventListener('click', startPuzzleSimple);
-      document.getElementById('puzzleMenuPattern').addEventListener('click', startPuzzlePattern);
+      document.getElementById('puzzleMenuPattern').addEventListener('click', () => { puzzlePatternPos = 0; startPuzzlePattern(); });
       function showPuzzleContainers(mode) {
         document.getElementById('puzzleMenu').style.display = 'none';
         const isPattern = mode === 'pattern';
         document.getElementById('puzzleBoard').style.display = isPattern ? '' : 'none';
         document.getElementById('puzzleTray').style.display = isPattern ? '' : 'none';
         document.getElementById('puzzleStage').style.display = isPattern ? 'none' : '';
+        document.getElementById('puzzlePreviewRow').style.display = isPattern ? '' : 'none';
       }
       /* ===== 形状配对（原版简单拖拽） ===== */
       function startPuzzleSimple() {
@@ -2693,11 +2714,34 @@
       }
 
       /* ===== 图形拼接（新版图案拼图，同形状不限顺序） ===== */
+      // 难度分级：按碎片数排，3 块简单、4 块中等、5 块以上困难；按简单→困难顺序出题
+      const puzzlePatternOrder = puzzlePatterns.map((p, i) => i).sort((a, b) => puzzlePatterns[a].pieces.length - puzzlePatterns[b].pieces.length);
+      let puzzlePatternPos = 0;
+      function puzzleLevelOf(pattern) {
+        const n = pattern.pieces.length;
+        return n <= 3 ? '简单' : n === 4 ? '中等' : '困难';
+      }
+      // 生成一块带细节的拼图图形（细节只画在圆形、方形碎片上：眼睛/笑脸/轮毂）
+      function makePuzzleArt(piece) {
+        const art = document.createElement('span');
+        art.className = `shape-art ${piece.cls}`;
+        art.style.setProperty('--s-color', piece.color);
+        if (piece.detail) {
+          const d = document.createElement('span');
+          d.className = `puzzle-detail detail-${piece.detail}`;
+          if (piece.detail === 'face' || piece.detail === 'eyes') d.innerHTML = '<i></i><i></i>';
+          if (piece.detail === 'face') d.innerHTML += '<b></b>';
+          if (piece.detail === 'eye' || piece.detail === 'hub') d.innerHTML = '<i></i>';
+          art.appendChild(d);
+        }
+        return art;
+      }
       function startPuzzlePattern() {
         puzzleActive = true;
         puzzleDone = 0;
         showPuzzleContainers('pattern');
-        puzzlePatternIdx = Math.floor(Math.random() * puzzlePatterns.length);
+        puzzlePatternIdx = puzzlePatternOrder[puzzlePatternPos % puzzlePatternOrder.length];
+        puzzlePatternPos++;
         renderPuzzlePattern();
       }
 
@@ -2707,7 +2751,21 @@
         puzzleDone = 0;
         puzzleSlots = [];
 
-        document.getElementById('puzzlePatternName').textContent = `拼一拼：${pattern.name}`;
+        document.getElementById('puzzlePatternName').textContent = `拼一拼：${pattern.name} · ${puzzleLevelOf(pattern)}`;
+
+        // 完成图预览：用同一份图案数据画出成品，照着拼
+        const preview = document.getElementById('puzzlePreview');
+        preview.innerHTML = '';
+        pattern.pieces.forEach(piece => {
+          const wrap = document.createElement('div');
+          wrap.className = 'puzzle-preview-piece';
+          wrap.style.left = `${piece.x}%`;
+          wrap.style.top = `${piece.y}%`;
+          wrap.style.width = `${piece.w}%`;
+          wrap.style.height = `${piece.h}%`;
+          wrap.appendChild(makePuzzleArt(piece));
+          preview.appendChild(wrap);
+        });
 
         const progress = document.getElementById('puzzleProgress');
         progress.innerHTML = '';
@@ -2717,7 +2775,7 @@
           progress.appendChild(dot);
         }
 
-        // 渲染拼图板上的目标轮廓
+        // 渲染拼图板上的目标轮廓（槽位按碎片颜色着色，幽灵图形加深）
         const board = document.getElementById('puzzleBoard');
         board.innerHTML = '';
         pattern.pieces.forEach((piece, i) => {
@@ -2727,12 +2785,10 @@
           target.style.top = `${piece.y}%`;
           target.style.width = `${piece.w}%`;
           target.style.height = `${piece.h}%`;
+          target.style.setProperty('--tint', piece.color);
           target.dataset.idx = i;
 
-          const art = document.createElement('span');
-          art.className = `shape-art ${piece.cls}`;
-          art.style.setProperty('--s-color', piece.color);
-          target.appendChild(art);
+          target.appendChild(makePuzzleArt(piece));
           board.appendChild(target);
           puzzleSlots.push({ el: target, piece, idx: i });
         });
@@ -2746,10 +2802,7 @@
           el.className = 'puzzle-tray-piece';
           el.dataset.idx = piece.origIdx;
 
-          const art = document.createElement('span');
-          art.className = `shape-art ${piece.cls}`;
-          art.style.setProperty('--s-color', piece.color);
-          el.appendChild(art);
+          el.appendChild(makePuzzleArt(piece));
           tray.appendChild(el);
           bindPuzzleDragV2(el, piece);
         });
@@ -2799,10 +2852,7 @@
             el.classList.add('placed');
             target.el.classList.add('filled');
             target.el.innerHTML = '';
-            const art = document.createElement('span');
-            art.className = `shape-art ${piece.cls}`;
-            art.style.setProperty('--s-color', piece.color);
-            target.el.appendChild(art);
+            target.el.appendChild(makePuzzleArt(piece));
             playCorrect();
             speak(piece.shape);
             recordMastery('shape', piece.shape, true);
