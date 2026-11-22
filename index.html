@@ -1467,10 +1467,10 @@
       function startMemory() {
         round = 0; score = 0; combo = 0; bestCombo = 0; lives = 3; wrongCount = 0; levelStars = [];
         el.livesText.hidden = false; el.timerText.hidden = true; el.progressRow.hidden = false; el.comboText.hidden = true;
-        el.levelBadge.textContent = '记忆挑战 · 共 6 题';
+        el.levelBadge.textContent = '记忆挑战 · 共 9 题';
         const uniq = new Map();
         artPool.forEach(a => { if (!uniq.has(a.color)) uniq.set(a.color, a); });
-        deck = shuffled([...uniq.values()]).slice(0, 6);
+        deck = shuffled([...uniq.values()]).slice(0, 9);
         renderLives(); nextMemoryRound();
       }
       function nextMemoryRound() {
